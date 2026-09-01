@@ -1419,27 +1419,333 @@ async function callGroqAI(userPrompt) {
   }
 }
 
+// ── Dynamic Venture Synthesizer (Context-Aware Offline & Fallback Engine) ──────
+
+function generateDynamicExecutiveDeliberation(userPrompt) {
+  const prompt = (userPrompt || '').trim();
+  const lower = prompt.toLowerCase();
+
+  // 1. Detect Domain & Categorization
+  let domain = 'general';
+  let industryName = 'Next-Gen Autonomous Tech';
+  let defaultVentureName = 'VentureFlow AI';
+  let competitors = [
+    { name: 'Legacy Incumbents', price: 'High / Custom', weakness: 'Slow manual workflows, high lock-in', advantage: 'End-to-end AI automation & 10x faster execution' },
+    { name: 'Point Solutions', price: '$49 - $199/mo', weakness: 'Fragmented data, lack of full integration', advantage: 'Unified autonomous executive intelligence' },
+    { name: 'Manual Agencies', price: '$5,000+/mo', weakness: 'Human bottleneck, unscalable margins', advantage: 'Zero human overhead, instant deterministic output' }
+  ];
+  let techStack = ['Next.js 15 App Router', 'Python FastAPI', 'PostgreSQL + pgvector', 'Redis', 'Docker + Kubernetes', 'Stripe Billing'];
+  let designTokens = { primary: '#1B2233', accent: '#3E6B8C', bg: '#FDFBF7', font: 'Inter + Newsreader' };
+  let pricingModel = { arpu: '$49/mo', cac: '$110', ltv: '$650', ltvCac: '5.9x', breakeven: '350 active subscribers' };
+  let legalRegime = ['GDPR / CCPA Data Protection', 'SOC2 Type II Compliance', 'Proprietary IP Trade Secrets & Work-For-Hire Shield'];
+  let gtmChannels = ['Product Hunt Launch', 'Targeted LinkedIn & Twitter/X Outbound', 'Creator Affiliate Network', 'High-Intent Programmatic SEO'];
+
+  if (lower.includes('estate') || lower.includes('property') || lower.includes('housing') || lower.includes('home') || lower.includes('realtor') || lower.includes('staging')) {
+    domain = 'proptech';
+    industryName = 'PropTech & Real Estate Intelligence';
+    defaultVentureName = 'EstateMatrix AI';
+    competitors = [
+      { name: 'BoxBrownie / Matterport', price: '$24 - $99/listing', weakness: 'Turnaround delay (24-48h), expensive manual staging', advantage: 'Instant 4K generative staging in < 3 seconds' },
+      { name: 'Zillow / Redfin Tools', price: 'Free / Bundled', weakness: 'Generic listing features, no agent sales autopilot', advantage: 'Autonomous agent lead-to-close pipeline' },
+      { name: 'Local Staging Firms', price: '$2,000 - $5,000', weakness: 'Physical logistics, heavy upfront cost', advantage: 'Zero physical staging overhead with 99% photorealism' }
+    ];
+    techStack = ['WebGL / Three.js 3D Viewer', 'PyTorch Diffusion Pipeline', 'Next.js 15 + AWS S3', 'PostgreSQL + PostGIS', 'Stripe'];
+    designTokens = { primary: '#1A2E26', accent: '#2D6A4F', bg: '#F8F9FA', font: 'Playfair Display + Inter' };
+    pricingModel = { arpu: '$89/mo', cac: '$140', ltv: '$890', ltvCac: '6.3x', breakeven: '220 brokerage accounts' };
+    legalRegime = ['MLS Data License Compliance', 'Fair Housing Act Safe Harbors', 'Copyright Defense on AI-Enhanced Renderings'];
+    gtmChannels = ['National Association of Realtors (NAR) Partnerships', 'Brokerage Enterprise Pilot Demos', 'Instagram/TikTok Virtual Tour Ads'];
+  } else if (lower.includes('crypto') || lower.includes('finance') || lower.includes('tax') || lower.includes('fintech') || lower.includes('bank') || lower.includes('invest') || lower.includes('money') || lower.includes('stock') || lower.includes('trading') || lower.includes('invoice') || lower.includes('accounting')) {
+    domain = 'fintech';
+    industryName = 'FinTech & Automated Capital Systems';
+    defaultVentureName = 'FinLedger AI';
+    competitors = [
+      { name: 'CoinTracker / Koinly', price: '$99 - $399/yr', weakness: 'Complex manual reconciliation, inaccurate chain parsing', advantage: 'Multi-chain autonomous audit with real-time tax optimization' },
+      { name: 'QuickBooks / Xero', price: '$35 - $80/mo', weakness: 'No native smart contract or digital asset support', advantage: 'Hybrid fiat-crypto ledger with instant reconciliation' },
+      { name: 'Traditional CPAs', price: '$1,500+/filing', weakness: 'High cost, slow turnaround, limited crypto literacy', advantage: 'Deterministic IRS-compliant reporting in 1-click' }
+    ];
+    techStack = ['Rust Blockchain Indexer', 'FastAPI Financial Engine', 'TimescaleDB / PostgreSQL', 'Redis Queue', 'Plaid / Stripe Financial API'];
+    designTokens = { primary: '#0F172A', accent: '#0EA5E9', bg: '#F8FAFC', font: 'JetBrains Mono + Inter' };
+    pricingModel = { arpu: '$79/mo', cac: '$160', ltv: '$950', ltvCac: '5.9x', breakeven: '200 active users' };
+    legalRegime = ['SEC & FINRA Regulatory Safe Harbors', 'IRS Form 8949 / Schedule D Compliance', 'SOC2 Type II & End-to-End Encryption'];
+    gtmChannels = ['DeFi Community Collaborations', 'Crypto Founder & Freelancer Outbound', 'Tax Season Early-Bird Campaign'];
+  } else if (lower.includes('drone') || lower.includes('delivery') || lower.includes('logistics') || lower.includes('supply') || lower.includes('warehouse') || lower.includes('robot') || lower.includes('hardware') || lower.includes('fleet')) {
+    domain = 'robotics';
+    industryName = 'Autonomous Robotics & Fleet Logistics';
+    defaultVentureName = 'AeroFleet AI';
+    competitors = [
+      { name: 'Zipline / Wing', price: 'Enterprise B2B', weakness: 'Heavy proprietary hardware lock-in, slow custom rollout', advantage: 'Turnkey fleet software compatible with open-source drone platforms' },
+      { name: 'Traditional Couriers (FedEx/DHL)', price: '$15 - $45/delivery', weakness: 'Traffic congestion, high carbon footprint, high unit cost', advantage: '10x faster delivery speed with 80% lower cost per mile' }
+    ];
+    techStack = ['ROS 2 (Robot Operating System)', 'WebRTC Telemetry Stream', 'Rust Microservices', 'MQTT Broker', 'AWS IoT Core'];
+    designTokens = { primary: '#1E293B', accent: '#F97316', bg: '#F8FAFC', font: 'Space Grotesk + Inter' };
+    pricingModel = { arpu: '$499/mo per fleet', cac: '$1,200', ltv: '$8,500', ltvCac: '7.1x', breakeven: '25 enterprise hubs' };
+    legalRegime = ['FAA Part 107 & Beyond Visual Line of Sight (BVLOS) Approvals', 'Aviation Liability Insurance', 'Airspace Privacy Regimes'];
+    gtmChannels = ['Direct Outbound to Rural Hospital Networks & Regional Retailers', 'Aviation & Robotics Expo Live Demonstrations'];
+  } else if (lower.includes('b2b') || lower.includes('sales') || lower.includes('outbound') || lower.includes('lead') || lower.includes('crm') || lower.includes('cold email') || lower.includes('pipeline') || lower.includes('prospect')) {
+    domain = 'b2bsaas';
+    industryName = 'Autonomous B2B Sales & GTM Operations';
+    defaultVentureName = 'LeadForge AI';
+    competitors = [
+      { name: 'Apollo.io / ZoomInfo', price: '$99 - $1,200/mo', weakness: 'Static databases, high email bounce rates, manual cadence', advantage: 'Autonomous research + individualized deep personalization at scale' },
+      { name: 'Outreach / Salesloft', price: '$135/seat/mo', weakness: 'Requires human SDR effort, rigid email templates', advantage: 'End-to-end autonomous SDR agents booking qualified calls' }
+    ];
+    techStack = ['Node.js Worker Cluster', 'Puppeteer / Playwright Scraping Grid', 'Groq Llama-3 / OpenAI Engine', 'PostgreSQL', 'SendGrid / Smartlead API'];
+    designTokens = { primary: '#1E1B4B', accent: '#4F46E5', bg: '#FAF5FF', font: 'Plus Jakarta Sans' };
+    pricingModel = { arpu: '$149/mo', cac: '$220', ltv: '$1,450', ltvCac: '6.6x', breakeven: '140 paying teams' };
+    legalRegime = ['CAN-SPAM & GDPR Article 6(1)(f) Legitimate Interest Defense', 'Email Warmup & Domain Reputation Isolation', 'Terms of Data Extraction'];
+    gtmChannels = ['Cold Dogfooding (Eating our own dog food via autonomous outbound)', 'SaaS Founder Communities & YC Co-Founder Matching'];
+  } else if (lower.includes('coffee') || lower.includes('dtc') || lower.includes('e-commerce') || lower.includes('store') || lower.includes('clothing') || lower.includes('brand') || lower.includes('retail') || lower.includes('subscription')) {
+    domain = 'dtc';
+    industryName = 'Autonomous DTC & Algorithmic Commerce';
+    defaultVentureName = 'OmniCraft DTC';
+    competitors = [
+      { name: 'Trade Coffee / Blue Bottle', price: '$20 - $25/bag', weakness: 'Static flavor profiles, slow taste adaptation', advantage: 'Dynamic algorithmic flavor tuning synced with customer feedback' },
+      { name: 'Generic Shopify Stores', price: 'Varies', weakness: 'High customer churn (> 40% after month 2)', advantage: 'Predictive retention modeling & automated custom blending' }
+    ];
+    techStack = ['Shopify Storefront API', 'Next.js 15 Commerce', 'Klaviyo Integration Engine', 'Stripe Billing', 'Supabase'];
+    designTokens = { primary: '#2D1B13', accent: '#9C6644', bg: '#FDFBF7', font: 'Fraunces + Inter' };
+    pricingModel = { arpu: '$28/mo', cac: '$38', ltv: '$190', ltvCac: '5.0x', breakeven: '650 active subscribers' };
+    legalRegime = ['FDA Food Safety & Packaging Compliance', 'Automatic Subscription Renewal Disclosures (FTC Guidelines)', 'Payment Data PCI-DSS Safe Harbors'];
+    gtmChannels = ['Micro-Influencer TikTok Unboxings', 'Interactive "Taste Profile" Quiz Funnel', 'Referral Coffee Box Gift Program'];
+  } else if (lower.includes('code') || lower.includes('dev') || lower.includes('api') || lower.includes('developer') || lower.includes('sdk') || lower.includes('infra') || lower.includes('cloud') || lower.includes('git')) {
+    domain = 'devtools';
+    industryName = 'Developer Tools & Cloud Acceleration';
+    defaultVentureName = 'DevPilot AI';
+    competitors = [
+      { name: 'GitHub Copilot / Cursor', price: '$10 - $20/mo', weakness: 'Limited project-wide autonomous execution, basic autocomplete', advantage: 'Full-repo autonomous agentic orchestration & PR generation' },
+      { name: 'Manual QA / DevOps Services', price: 'High Hourly', weakness: 'Slow release cycles, manual pipeline triage', advantage: 'Zero-touch CI/CD self-healing pipelines' }
+    ];
+    techStack = ['Rust CLI & LSP Server', 'Tree-sitter AST Parser', 'WebAssembly Engine', 'Go Backend Microservices', 'Cloudflare Workers'];
+    designTokens = { primary: '#090D16', accent: '#38BDF8', bg: '#0F172A', font: 'Fira Code + Inter' };
+    pricingModel = { arpu: '$29/seat/mo', cac: '$65', ltv: '$480', ltvCac: '7.3x', breakeven: '300 developer seats' };
+    legalRegime = ['Open Source License (MIT/Apache 2.0) Compatibility', 'Zero Code Retention Guarantee for Enterprise Repositories', 'SOC2 Type II Certification'];
+    gtmChannels = ['Open-Source GitHub Release with Star Acceleration', 'HackerNews Show HN Launch', 'Developer Discord & Reddit Technical Demos'];
+  } else if (lower.includes('fitness') || lower.includes('workout') || lower.includes('gym') || lower.includes('health') || lower.includes('diet') || lower.includes('whoop') || lower.includes('apple watch')) {
+    domain = 'healthtech';
+    industryName = 'HealthTech & Adaptive Biometrics';
+    defaultVentureName = 'PulseAI';
+    competitors = [
+      { name: 'Whoop Coach / Oura', price: '$30/mo + $299 device', weakness: 'Hardware lock-in, generic recovery advice', advantage: 'Cross-wearable integration with dynamic real-time workout adaptation' },
+      { name: 'Apple Fitness+ / Freeletics', price: '$12.99/mo', weakness: 'Pre-recorded non-adaptive static workouts', advantage: 'Hyper-personalized heart-rate zone calibrated sets' }
+    ];
+    techStack = ['Apple HealthKit SDK', 'Google Health Connect API', 'TensorFlow Lite On-Device', 'FastAPI Backend', 'PostgreSQL'];
+    designTokens = { primary: '#0F172A', accent: '#0D9488', bg: '#F0FDFA', font: 'Outfit + Inter' };
+    pricingModel = { arpu: '$19.99/mo', cac: '$45', ltv: '$260', ltvCac: '5.7x', breakeven: '450 subscribers' };
+    legalRegime = ['HIPAA & GDPR Health Telemetry Compliance', 'Clear "Not Medical Advice" Disclaimers', 'FDA SaMD Regulatory Exemption'];
+    gtmChannels = ['Fitness Creator TikTok & Strava Partnerships', 'App Store Search Ads Optimization', 'Free 7-Day Strain Test Funnel'];
+  } else {
+    // General / Custom Concept
+    const words = prompt.split(/\s+/).filter(w => w.length > 3);
+    const primaryWord = words[0] ? words[0].charAt(0).toUpperCase() + words[0].slice(1).replace(/[^a-zA-Z]/g, '') : 'Omni';
+    defaultVentureName = `${primaryWord}AI`;
+    industryName = `${primaryWord} Intelligence & Autonomous Automation`;
+  }
+
+  // Create clean venture topic
+  const ventureTopic = `${defaultVentureName}: Autonomous ${industryName.split('&')[0].trim()}`;
+
+  // 2. Generate Deep Customized Multi-Agent Deliberation Steps
+  const steps = [
+    {
+      agent: 'ceo',
+      phase: 1,
+      time: '00:01',
+      title: 'Executive Charter & Strategic Mandate',
+      reasoning: `Synthesizing founder directive: "${prompt}". Formulating beachhead wedge, core moat, and operational directives for all 6 departments.`,
+      content: `
+        <p><strong>Executive Directive:</strong> We are commissioning the master charter for <strong>${defaultVentureName}</strong> — an autonomous venture designed to solve: <em>"${prompt}"</em>.</p>
+        <p><strong>Operational Mandates for Executive Team:</strong></p>
+        <ul>
+          <li><strong>Research:</strong> Analyze competitor friction, quantify TAM/SAM, and define our beachhead customer wedge.</li>
+          <li><strong>Engineering:</strong> Architect scalable cloud infrastructure (${techStack.slice(0, 3).join(', ')}) with sub-second latency.</li>
+          <li><strong>Design:</strong> Establish the design system tokens (${designTokens.font}), intuitive user flow, and minimal cognitive load ergonomics.</li>
+          <li><strong>Marketing:</strong> Build high-converting GTM launch funnel and viral referral loop for rapid customer acquisition.</li>
+          <li><strong>Finance:</strong> Model unit economics targeting ${pricingModel.arpu} ARPU with ${pricingModel.ltvCac} LTV:CAC and under 4-month payback.</li>
+          <li><strong>Legal:</strong> Implement ${legalRegime[0]} compliance, liability insulation, and bulletproof terms of service.</li>
+        </ul>
+      `,
+      charterKey: 'vision',
+      charterSnippet: `Autonomous solution engineered to solve: "${prompt}". Core moat rests on end-to-end workflow automation and proprietary algorithmic intelligence.`
+    },
+    {
+      agent: 'research',
+      phase: 2,
+      time: '00:03',
+      title: 'Market Landscape & Competitive Benchmark',
+      reasoning: `Evaluating market positioning in ${industryName}. Identifying incumbent vulnerabilities, pricing power, and beachhead customer personas.`,
+      content: `
+        <p><strong>Market Analysis:</strong> The addressable market in ${industryName} suffers from slow legacy tooling and high manual overhead. Our competitive advantage lies in speed, autonomous execution, and transparent pricing.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Incumbent / Alternative</th>
+              <th>Typical Cost</th>
+              <th>Vulnerability / Gap</th>
+              <th>${defaultVentureName} Moat</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${competitors.map(c => `
+              <tr>
+                <td><strong>${c.name}</strong></td>
+                <td>${c.price}</td>
+                <td>${c.weakness}</td>
+                <td><span style="color:var(--status-done);font-weight:600;">${c.advantage}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        <p><strong>Beachhead Customer Profile:</strong> Early-adopter operators and professionals who prioritize time savings, automated execution, and modern UX.</p>
+      `,
+      charterKey: 'market',
+      charterSnippet: `Targeting addressable demand in ${industryName}. Moat established via 10x faster execution and direct vulnerability exploitation of legacy alternatives.`
+    },
+    {
+      agent: 'engineer',
+      phase: 2,
+      time: '00:06',
+      title: 'Cloud Architecture & Technical Stack Specifications',
+      reasoning: `Formulating production-grade infrastructure plan. Prioritizing low latency, deterministic execution, data security, and seamless API extensibility.`,
+      content: `
+        <p><strong>Recommended Core Architecture:</strong></p>
+        <ul>
+          <li><strong>Frontend Application:</strong> ${techStack[0]} with server-side rendering, responsive glassmorphism design tokens, and progressive caching.</li>
+          <li><strong>Backend Services & AI Engine:</strong> ${techStack[1]} with asynchronous job workers and streaming responses.</li>
+          <li><strong>Database & Storage:</strong> ${techStack[2]} for relational integrity, vector similarity search, and high-concurrency read replicas.</li>
+          <li><strong>Security & Ingestion:</strong> OAuth2 / JWT authentication, role-based access control, and TLS 1.3 encrypted data in transit and at rest.</li>
+        </ul>
+        <p><strong>Latency & Performance Target:</strong> &lt; 150ms P95 latency across primary API endpoints.</p>
+      `,
+      charterKey: 'architecture',
+      charterSnippet: `Full-stack architecture leveraging ${techStack.slice(0, 4).join(', ')} designed for high scalability and secure data pipelines.`
+    },
+    {
+      agent: 'designer',
+      phase: 2,
+      time: '00:09',
+      title: 'Design System & UI/UX Interaction Blueprint',
+      reasoning: `Crafting visual identity and ergonomic interface blueprint. Ensuring clarity, high affordance, and frictionless onboarding.`,
+      content: `
+        <p><strong>Visual System & Design Tokens:</strong></p>
+        <ul>
+          <li><strong>Primary Palette:</strong> Deep Slate (<code style="color:${designTokens.primary};">${designTokens.primary}</code>) paired with Accent (<code style="color:${designTokens.accent};">${designTokens.accent}</code>) on Clean Paper (<code style="color:${designTokens.bg};">${designTokens.bg}</code>).</li>
+          <li><strong>Typography System:</strong> ${designTokens.font} for high readability across mobile and desktop.</li>
+          <li><strong>UX Flow:</strong> 3-step zero-friction onboarding: (1) Instant Directive Formulation &rarr; (2) Live AI Synthesis &rarr; (3) Actionable 1-Click Export.</li>
+        </ul>
+      `,
+      charterKey: 'design',
+      charterSnippet: `Clean design system using ${designTokens.font} and a high-contrast palette tailored for intuitive, distraction-free workflow execution.`
+    },
+    {
+      agent: 'marketing',
+      phase: 2,
+      time: '00:12',
+      title: 'Go-To-Market Playbook & Growth Engine',
+      reasoning: `Structuring 90-day multi-channel acquisition strategy. Optimizing organic referral loops and CAC efficiency.`,
+      content: `
+        <p><strong>90-Day GTM Launch Roadmap:</strong></p>
+        <ul>
+          <li><strong>Phase 1 — Alpha Waitlist & Founder Community:</strong> Launch via ${gtmChannels[0]} and direct founder networking. Target first 100 beta users.</li>
+          <li><strong>Phase 2 — Direct Growth Channels:</strong> Deploy ${gtmChannels[1]} and ${gtmChannels[2] || 'programmatic SEO'} to drive consistent weekly signups.</li>
+          <li><strong>Phase 3 — Product-Led Viral Loop:</strong> Enable public charter sharing and referral credits ("Invite a founder &rarr; Unlock unlimited deliberations").</li>
+        </ul>
+      `,
+      charterKey: 'gtm',
+      charterSnippet: `Multi-stage GTM launch driven by ${gtmChannels.slice(0, 2).join(' and ')}, reinforced with viral sharing mechanics.`
+    },
+    {
+      agent: 'finance',
+      phase: 3,
+      time: '00:15',
+      title: 'Unit Economics & Financial Projections',
+      reasoning: `Financial sensitivity analysis based on subscription economics, gross margins, and break-even thresholds.`,
+      content: `
+        <p><strong>Core Unit Economics Matrix:</strong></p>
+        <table>
+          <thead>
+            <tr>
+              <th>Financial Metric</th>
+              <th>Target Model</th>
+              <th>Benchmark Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Average Revenue Per User (ARPU)</strong></td>
+              <td>${pricingModel.arpu}</td>
+              <td>Healthy tier pricing</td>
+            </tr>
+            <tr>
+              <td><strong>Target Customer Acquisition Cost (CAC)</strong></td>
+              <td>${pricingModel.cac}</td>
+              <td>Blended organic + paid</td>
+            </tr>
+            <tr>
+              <td><strong>Customer Lifetime Value (LTV)</strong></td>
+              <td>${pricingModel.ltv}</td>
+              <td>Estimated 12-month retention</td>
+            </tr>
+            <tr>
+              <td><strong>LTV : CAC Ratio</strong></td>
+              <td><span style="color:var(--status-done);font-weight:700;">${pricingModel.ltvCac}</span></td>
+              <td>Top-quartile efficiency (&gt; 3.0x)</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><strong>Break-Even Milestone:</strong> Reached at approximately <strong>${pricingModel.breakeven}</strong>.</p>
+      `,
+      disclaimer: 'Financial estimates and unit economic models are generated for strategic planning purposes only and do not constitute certified financial or investment advice.',
+      charterKey: 'economics',
+      charterSnippet: `Pricing established at ${pricingModel.arpu} with ${pricingModel.ltvCac} LTV:CAC ratio. Break-even threshold estimated at ${pricingModel.breakeven}.`
+    },
+    {
+      agent: 'legal',
+      phase: 3,
+      time: '00:18',
+      title: 'Regulatory Boundaries, Data Privacy & IP Safeguards',
+      reasoning: `Structuring regulatory compliance and IP defense frameworks for ${industryName}. Mitigating statutory liabilities.`,
+      content: `
+        <p><strong>Legal & Compliance Protocols:</strong></p>
+        <ul>
+          ${legalRegime.map(reg => `<li><strong>${reg}:</strong> Institutional policies and automated audit logging.</li>`).join('')}
+          <li><strong>Terms of Service & Liability Limitation:</strong> Explicit indemnity shields, standard arbitration clause, and clear disclaimers.</li>
+        </ul>
+      `,
+      disclaimer: 'Legal agent outputs provide generalized informational and compliance frameworks only and do not constitute formal legal counsel.',
+      charterKey: 'compliance',
+      charterSnippet: `Standard compliance protocols including ${legalRegime[0]}, liability limitation shields, and proprietary IP safe harbors.`
+    },
+    {
+      agent: 'ceo',
+      phase: 4,
+      time: '00:21',
+      title: 'Final Synthesis & Master Charter Ratification',
+      reasoning: `Harmonizing executive domain findings into a unified, actionable Master Startup Charter for ${defaultVentureName}.`,
+      content: `
+        <p><strong>Executive Boardroom Verdict:</strong> All operational directives have been evaluated and ratified across research, engineering, design, marketing, finance, and legal compliance.</p>
+        <p>The <strong>Master Startup Charter for ${defaultVentureName}</strong> is hereby ratified and ready for immediate founder execution.</p>
+      `,
+      charterKey: 'vision',
+      charterSnippet: `Master Startup Charter for ${defaultVentureName} ratified by the executive board across all 6 operational departments.`
+    }
+  ];
+
+  return { topic: ventureTopic, steps };
+}
+
 // ── Multi-Agent Playback & Simulation Engine ────────────────────────────────────
 
-async function runSimulation(promptText, presetKey = 'fitness') {
+async function runSimulation(promptText, presetKey = null) {
   resetBoardroom();
   state.isSimulating = true;
   switchView('boardroom');
 
-  const preset = PRESETS[presetKey] || PRESETS.fitness;
-  const initialPrompt = promptText || preset.prompt;
+  const preset = presetKey && PRESETS[presetKey] ? PRESETS[presetKey] : null;
+  const initialPrompt = promptText || (preset ? preset.prompt : 'I want to build an innovative AI venture.');
   const topicTitle = document.getElementById('boardroom-topic-title');
-  if (topicTitle) {
-    topicTitle.textContent = preset.topic || initialPrompt;
-  }
-
-  // Auto-create chat session in DB if authenticated
-  if (Auth.isLoggedIn && !ChatAPI.currentChatId) {
-    await ChatAPI.create(preset.topic || initialPrompt);
-  }
 
   // 1. Post Founder Directive to Feed
-  addMessage('user', 'Founding Directive', `<p>${initialPrompt}</p>`, {
+  addMessage('user', 'Founding Directive', `<p>${escapeHtml(initialPrompt)}</p>`, {
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   });
 
@@ -1447,11 +1753,10 @@ async function runSimulation(promptText, presetKey = 'fitness') {
   setStatus('ceo', 'active');
 
   let steps = null;
-  let ventureTopic = preset.topic || initialPrompt;
+  let ventureTopic = '';
 
   // 2. Fetch Multi-Agent Intelligence from Groq AI (if API key present)
   if (GROQ_CONFIG.apiKey) {
-    // Show active thinking note in boardroom feed
     const thinkingNoteId = `thinking-${Date.now()}`;
     const feed = document.getElementById('boardroom-feed');
     let thinkingEl = null;
@@ -1468,7 +1773,7 @@ async function runSimulation(promptText, presetKey = 'fitness') {
           <div class="note-time">In Deliberation</div>
         </div>
         <div class="note-body" style="color:var(--ink-secondary);">
-          <em>⚡ Briefing Research, Engineering, Design, Marketing, Finance & Legal executive agents... Formulating startup charter.</em>
+          <em>⚡ Briefing Research, Engineering, Design, Marketing, Finance & Legal executive agents... Formulating customized startup charter.</em>
         </div>
       `;
       feed.appendChild(thinkingEl);
@@ -1507,15 +1812,30 @@ async function runSimulation(promptText, presetKey = 'fitness') {
       if (thinkingEl && thinkingEl.parentNode) {
         thinkingEl.parentNode.removeChild(thinkingEl);
       }
-      console.warn('Groq AI API error, falling back to preset steps:', err);
-      steps = preset.steps || PRESETS.fitness.steps;
+      console.warn('Groq AI API error, falling back to Dynamic Synthesizer:', err);
     }
-  } else {
-    steps = preset.steps || PRESETS.fitness.steps;
   }
 
+  // 3. If Live AI is not configured or failed, use Dynamic Venture Synthesizer (never repeat static PulseAI for custom prompts)
   if (!steps || steps.length === 0) {
-    steps = PRESETS.fitness.steps;
+    if (preset && (!promptText || promptText === preset.prompt)) {
+      steps = preset.steps;
+      ventureTopic = preset.topic;
+    } else {
+      const dynamicSynthesis = generateDynamicExecutiveDeliberation(initialPrompt);
+      steps = dynamicSynthesis.steps;
+      ventureTopic = dynamicSynthesis.topic;
+    }
+  }
+
+  if (topicTitle && ventureTopic) {
+    topicTitle.textContent = ventureTopic;
+  }
+  state.activeTopic = ventureTopic;
+
+  // Auto-create chat session in DB if authenticated
+  if (Auth.isLoggedIn && !ChatAPI.currentChatId) {
+    await ChatAPI.create(ventureTopic || initialPrompt);
   }
 
   // 3. Play through generated steps with realistic executive deliberation rhythm
@@ -1627,8 +1947,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroForm && heroInput) {
     heroForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const text = heroInput.value.trim() || 'I want to build an AI fitness companion.';
-      queueDirectiveAndGoToLogin(text, 'fitness');
+      const text = heroInput.value.trim() || 'I want to build an innovative AI venture.';
+      queueDirectiveAndGoToLogin(text, null);
     });
   }
 
@@ -1649,7 +1969,7 @@ document.addEventListener('DOMContentLoaded', () => {
     switchView('boardroom');
     if (state.pendingPrompt) {
       const promptToRun = state.pendingPrompt;
-      const presetToRun = state.pendingPreset || 'fitness';
+      const presetToRun = state.pendingPreset || null;
       state.pendingPrompt = '';
       runSimulation(promptToRun, presetToRun);
     }
@@ -1688,7 +2008,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const text = boardroomInput.value.trim();
       if (!text) return;
       boardroomInput.value = '';
-      runSimulation(text, 'fitness');
+      runSimulation(text, null);
     });
   }
 
@@ -1711,7 +2031,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportBtn = document.getElementById('btn-export-charter');
   if (exportBtn) {
     exportBtn.addEventListener('click', () => {
-      alert('FounderAI Startup Charter exported to markdown file: /PulseAI_Master_Charter.md');
+      const ventureName = state.activeTopic || 'FounderAI_Master_Charter';
+      const safeName = ventureName.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const mdContent = `# ${ventureName}\n\n` +
+        `**Generated by FounderAI Autonomous Executive Boardroom**\n` +
+        `**Date:** ${new Date().toLocaleDateString()}\n\n---\n\n` +
+        `## 1. Executive Vision & Strategy\n${state.charterData.vision || 'Pending deliberation...'}\n\n` +
+        `## 2. Market Intelligence & Competitor Landscape\n${state.charterData.market || 'Pending deliberation...'}\n\n` +
+        `## 3. System Architecture & Technical Stack\n${state.charterData.architecture || 'Pending deliberation...'}\n\n` +
+        `## 4. UI/UX Design System Blueprint\n${state.charterData.design || 'Pending deliberation...'}\n\n` +
+        `## 5. Go-To-Market & Growth Architecture\n${state.charterData.gtm || 'Pending deliberation...'}\n\n` +
+        `## 6. Unit Economics & Financial Model\n${state.charterData.economics || 'Pending deliberation...'}\n\n` +
+        `## 7. Regulatory & Compliance Framework\n${state.charterData.compliance || 'Pending deliberation...'}\n`;
+
+      const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${safeName}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     });
   }
 
