@@ -25,7 +25,7 @@
 
       <div id="header-actions-auth" class="header-actions" style="display: none;">
         <button class="btn btn-secondary btn-sm" data-view-target="profile">
-          <span>👤</span> <span>Taarun K (Founder)</span>
+          <span>👤</span> <span>Founder (Executive)</span>
         </button>
         <button id="btn-header-boardroom" class="btn btn-primary btn-sm" data-view-target="boardroom">Boardroom</button>
         <button id="btn-header-signout" class="btn btn-secondary btn-sm" style="color: var(--ink-muted);">Sign Out</button>
@@ -440,7 +440,7 @@
         <form id="mock-login-form">
           <div class="form-group">
             <label for="login-email">Founder Email</label>
-            <input type="email" id="login-email" value="founder@pulseai.com" required>
+            <input type="email" id="login-email" value="founder@foundrai.com" required>
           </div>
           
           <div class="form-group">
@@ -651,11 +651,11 @@
         <!-- Profile Header -->
         <div class="profile-header-card">
           <div class="profile-avatar-row">
-            <div class="profile-avatar-large">TK</div>
+            <div class="profile-avatar-large">FA</div>
             <div>
-              <div class="profile-name">Taarun K</div>
-              <div class="profile-meta-line">Chairman & Principal Founder • FounderAI Suite v1.0.4</div>
-              <div class="profile-meta-line" style="font-family: var(--font-mono); font-size: 0.78rem; margin-top: 4px;">founder@pulseai.com • ID: fdr_99214</div>
+              <div class="profile-name">Principal Founder</div>
+              <div class="profile-meta-line">Executive Chairman • FoundrAI Suite v1.0.4</div>
+              <div class="profile-meta-line" style="font-family: var(--font-mono); font-size: 0.78rem; margin-top: 4px;">founder@foundrai.com • ID: fdr_executive</div>
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
@@ -754,10 +754,40 @@
             <div class="profile-card">
               <h3><span>Intelligence Engine</span></h3>
               <div style="font-size: 0.85rem; color: var(--ink-secondary); line-height: 1.55;">
-                <div style="margin-bottom: 6px;"><strong>Core Engine:</strong> Google Gemini 2.0 Flash</div>
-                <div style="margin-bottom: 6px;"><strong>Execution Mode:</strong> Parallel Fan-Out / Synthesis</div>
-                <div style="margin-bottom: 6px;"><strong>Encryption:</strong> AES-256 Client-Controlled Keys</div>
-                <div><strong>Jurisdiction:</strong> US Delaware C-Corp / EU Cross-Border</div>
+                <div style="margin-bottom: 6px;"><strong>Core LLM:</strong> Groq AI (Ultra-Low Latency Inference)</div>
+                <div style="margin-bottom: 6px;"><strong>Execution Mode:</strong> 7-Agent Autonomous Executive Pipeline</div>
+                <div style="margin-bottom: 6px;"><strong>Structured Output:</strong> Multi-Agent JSON Protocol</div>
+                <div><strong>Jurisdiction:</strong> Global Startup Governance Framework</div>
+              </div>
+            </div>
+
+            <!-- Supabase Cloud Integration Card -->
+            <div class="profile-card">
+              <h3>
+                <span>Supabase Cloud Sync</span>
+                <span id="supabase-status-badge" class="status-badge" style="font-size: 0.72rem;"><span class="status-dot"></span> Ready</span>
+              </h3>
+              <p style="font-size: 0.82rem; color: var(--ink-secondary); margin-bottom: 10px;">
+                Persist compiled startup charters, board deliberations, and founder visionary directives directly to your Supabase project.
+              </p>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <input 
+                  type="text" 
+                  id="input-supabase-url" 
+                  placeholder="https://your-project.supabase.co" 
+                  style="width: 100%; font-size: 0.78rem; padding: 6px 10px; border: 1px solid var(--border-hairline); border-radius: 4px; background: var(--bg-paper);"
+                />
+                <input 
+                  type="password" 
+                  id="input-supabase-key" 
+                  placeholder="Supabase Anon Public API Key" 
+                  style="width: 100%; font-size: 0.78rem; padding: 6px 10px; border: 1px solid var(--border-hairline); border-radius: 4px; background: var(--bg-paper);"
+                />
+                <div style="display: flex; gap: 6px;">
+                  <button id="btn-save-supabase" type="button" class="btn btn-primary btn-sm" style="font-size: 0.75rem; flex: 1;">Connect Supabase</button>
+                  <button id="btn-test-supabase" type="button" class="btn btn-secondary btn-sm" style="font-size: 0.75rem;">Test</button>
+                </div>
+                <span id="supabase-feedback-text" style="font-size: 0.75rem; color: var(--ink-muted);">Auto-saves deliberations and charters upon completion.</span>
               </div>
             </div>
 
@@ -768,6 +798,9 @@
       </div>
     </div>
   </main>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Local Config (Optional) -->
   <script src="config.js" onerror="this.remove()"></script>

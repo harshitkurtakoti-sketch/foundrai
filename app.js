@@ -6,17 +6,73 @@
 
 // ── AI Engine Configuration ──────────────────────────────────────────────────
 // Groq AI API Configuration (Autonomous Multi-Agent Executive Intelligence)
-// Reads API key dynamically from config.js or browser localStorage
 const GROQ_CONFIG = {
   apiKey: (typeof window !== 'undefined' && window.GROQ_API_KEY) || 
           (typeof localStorage !== 'undefined' && localStorage.getItem('foundrai_groq_api_key')) || 
           '',
   endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-  model: 'openai/gpt-oss-120b'
+  model: 'openai/gpt-oss-120b',
+  fallbackModel: 'qwen/qwen3.8-27b'
 };
 
-// n8n Webhook Configuration (optional secondary webhook)
-const N8N_WEBHOOK_URL = '';
+// ── Supabase Cloud Database Configuration ─────────────────────────────────────
+const SUPABASE_CONFIG = {
+  url: (typeof window !== 'undefined' && window.SUPABASE_URL) || 
+       (typeof localStorage !== 'undefined' && localStorage.getItem('foundrai_supabase_url')) || '',
+  anonKey: (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) || 
+           (typeof localStorage !== 'undefined' && localStorage.getItem('foundrai_supabase_key')) || ''
+};
+
+let supabaseClient = null;
+
+function getSupabaseClient() {
+  if (supabaseClient) return supabaseClient;
+  const url = SUPABASE_CONFIG.url || (typeof localStorage !== 'undefined' && localStorage.getItem('foundrai_supabase_url'));
+  const key = SUPABASE_CONFIG.anonKey || (typeof localStorage !== 'undefined' && localStorage.getItem('foundrai_supabase_key'));
+  
+  if (url && key && typeof window !== 'undefined' && window.supabase && window.supabase.createClient) {
+    try {
+      supabaseClient = window.supabase.createClient(url, key);
+      return supabaseClient;
+    } catch (e) {
+      console.warn('Supabase initialization failed:', e);
+    }
+  }
+  return null;
+}
+
+async function saveCharterToSupabase(ventureTopic, founderPrompt, steps, charterData) {
+  const client = getSupabaseClient();
+  if (!client) {
+    console.log('Supabase not connected. Storing charter locally.');
+    return;
+  }
+
+  try {
+    const payload = {
+      topic: ventureTopic,
+      prompt: founderPrompt,
+      charter_vision: charterData.vision || '',
+      charter_market: charterData.market || '',
+      charter_architecture: charterData.architecture || '',
+      charter_gtm: charterData.gtm || '',
+      charter_economics: charterData.economics || '',
+      charter_compliance: charterData.compliance || '',
+      charter_design: charterData.design || '',
+      raw_steps: steps,
+      created_at: new Date().toISOString()
+    };
+
+    const { data, error } = await client.from('charters').insert([payload]);
+    if (error) {
+      console.warn('Supabase save error (ensure "charters" table exists):', error.message);
+    } else {
+      console.log('Successfully saved charter to Supabase:', data);
+    }
+  } catch (err) {
+    console.warn('Supabase write exception:', err);
+  }
+}
 
 // Agent Meta Registry
 const AGENT_REGISTRY = {
@@ -696,55 +752,84 @@ You must return a valid JSON object matching this schema:
 }`;
 
 /**
+ * Robust JSON Extractor from LLM output.
+ * Strips markdown code blocks (```json ... ```) or leading/trailing commentary.
+ */
+function extractJSONFromText(text) {
+  if (!text) return null;
+  let cleaned = text.trim();
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+  }
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1) {
+    cleaned = cleaned.slice(firstBrace, lastBrace + 1);
+  }
+  return JSON.parse(cleaned);
+}
+
+/**
  * Call Groq AI API with structured multi-agent executive prompt.
+ * Falls back to secondary model if primary model experiences latency or rate limits.
  */
 async function callGroqAI(userPrompt) {
   if (!GROQ_CONFIG.apiKey) {
     throw new Error('Groq API Key is not configured.');
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+  async function attemptRequest(modelName) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout
 
+    try {
+      const response = await fetch(GROQ_CONFIG.endpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_CONFIG.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [
+            { role: 'system', content: GROQ_SYSTEM_PROMPT },
+            { role: 'user', content: `Founder Directive: ${userPrompt}` }
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0.6
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errText = await response.text().catch(() => '');
+        throw new Error(`HTTP ${response.status}: ${errText}`);
+      }
+
+      const data = await response.json();
+      const rawContent = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      if (!rawContent) {
+        throw new Error('Empty content payload.');
+      }
+
+      return extractJSONFromText(rawContent);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
+    }
+  }
+
+  // Attempt primary model first
   try {
-    const response = await fetch(GROQ_CONFIG.endpoint, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GROQ_CONFIG.apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: GROQ_CONFIG.model,
-        messages: [
-          { role: 'system', content: GROQ_SYSTEM_PROMPT },
-          { role: 'user', content: `Founder Directive: ${userPrompt}` }
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.7
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const errText = await response.text().catch(() => '');
-      throw new Error(`Groq API returned HTTP ${response.status}: ${errText}`);
+    return await attemptRequest(GROQ_CONFIG.model);
+  } catch (primaryErr) {
+    console.warn(`Primary model (${GROQ_CONFIG.model}) failed, trying fallback (${GROQ_CONFIG.fallbackModel}):`, primaryErr);
+    if (GROQ_CONFIG.fallbackModel && GROQ_CONFIG.fallbackModel !== GROQ_CONFIG.model) {
+      return await attemptRequest(GROQ_CONFIG.fallbackModel);
     }
-
-    const data = await response.json();
-    const rawContent = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (!rawContent) {
-      throw new Error('Empty response from Groq AI.');
-    }
-
-    return JSON.parse(rawContent);
-  } catch (err) {
-    clearTimeout(timeoutId);
-    if (err.name === 'AbortError') {
-      throw new Error('Groq AI request timed out. Please try again.');
-    }
-    throw err;
+    throw primaryErr;
   }
 }
 
@@ -771,10 +856,34 @@ async function runSimulation(promptText, presetKey = 'fitness') {
   setStatus('ceo', 'active');
 
   let steps = null;
+  let ventureTopic = preset.topic || initialPrompt;
 
   // 2. Fetch Multi-Agent Intelligence from Groq AI (if API key present)
   if (GROQ_CONFIG.apiKey) {
-    // Show active thinking animation on CEO agent
+    // Show active thinking note in boardroom feed
+    const thinkingNoteId = `thinking-${Date.now()}`;
+    const feed = document.getElementById('boardroom-feed');
+    let thinkingEl = null;
+    if (feed) {
+      thinkingEl = document.createElement('div');
+      thinkingEl.id = thinkingNoteId;
+      thinkingEl.className = 'meeting-note';
+      thinkingEl.innerHTML = `
+        <div class="note-header">
+          <div class="note-agent-meta">
+            <span class="note-agent-badge" style="background:var(--agent-ceo);color:#fff;">CEO Agent</span>
+            <span class="roster-role-subtitle">Orchestration & Executive Brief</span>
+          </div>
+          <div class="note-time">In Deliberation</div>
+        </div>
+        <div class="note-body" style="color:var(--ink-secondary);">
+          <em>⚡ Briefing Research, Engineering, Design, Marketing, Finance & Legal executive agents... Formulating startup charter.</em>
+        </div>
+      `;
+      feed.appendChild(thinkingEl);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
     const agentIds = Object.keys(AGENT_REGISTRY);
     let tick = 0;
     const loadingInterval = setInterval(() => {
@@ -784,15 +893,19 @@ async function runSimulation(promptText, presetKey = 'fitness') {
       if (tick > 1) {
         setStatus(agentIds[(tick - 1) % agentIds.length], 'idle');
       }
-    }, 400);
+    }, 450);
 
     try {
       const aiResult = await callGroqAI(initialPrompt);
       clearInterval(loadingInterval);
+      if (thinkingEl && thinkingEl.parentNode) {
+        thinkingEl.parentNode.removeChild(thinkingEl);
+      }
       agentIds.forEach(id => setStatus(id, 'idle'));
 
-      if (aiResult.topic && topicTitle) {
-        topicTitle.textContent = aiResult.topic;
+      if (aiResult.topic) {
+        ventureTopic = aiResult.topic;
+        if (topicTitle) topicTitle.textContent = ventureTopic;
       }
 
       if (Array.isArray(aiResult.steps) && aiResult.steps.length > 0) {
@@ -800,8 +913,10 @@ async function runSimulation(promptText, presetKey = 'fitness') {
       }
     } catch (err) {
       clearInterval(loadingInterval);
+      if (thinkingEl && thinkingEl.parentNode) {
+        thinkingEl.parentNode.removeChild(thinkingEl);
+      }
       console.warn('Groq AI API error, falling back to preset steps:', err);
-      // If error occurs, fall back to preset steps so user always gets an executive response
       steps = preset.steps || PRESETS.fitness.steps;
     }
   } else {
@@ -818,6 +933,8 @@ async function runSimulation(promptText, presetKey = 'fitness') {
   function executeNextStep() {
     if (currentStepIdx >= steps.length) {
       state.isSimulating = false;
+      // Auto-save completed deliberation and charter to Supabase
+      saveCharterToSupabase(ventureTopic, initialPrompt, steps, state.charterData);
       return;
     }
 
@@ -860,12 +977,15 @@ async function runSimulation(promptText, presetKey = 'fitness') {
         setStatus(step.agent, 'done');
         setStage(4);
         state.isSimulating = false;
+        // Auto-save completed deliberation and charter to Supabase
+        saveCharterToSupabase(ventureTopic, initialPrompt, steps, state.charterData);
       }, 600);
     }
   }
 
   state.simulationTimer = setTimeout(executeNextStep, 500);
 }
+
 
 
 // Initialization & Event Listeners
@@ -1037,6 +1157,84 @@ document.addEventListener('DOMContentLoaded', () => {
   if (profileSignOutBtn) {
     profileSignOutBtn.addEventListener('click', () => {
       signOut();
+    });
+  }
+
+  // Supabase UI Connect & Test Listeners
+  const supabaseUrlInput = document.getElementById('input-supabase-url');
+  const supabaseKeyInput = document.getElementById('input-supabase-key');
+  const supabaseSaveBtn = document.getElementById('btn-save-supabase');
+  const supabaseTestBtn = document.getElementById('btn-test-supabase');
+  const supabaseStatusBadge = document.getElementById('supabase-status-badge');
+  const supabaseFeedback = document.getElementById('supabase-feedback-text');
+
+  // Load existing credentials from localStorage if present
+  if (supabaseUrlInput && localStorage.getItem('foundrai_supabase_url')) {
+    supabaseUrlInput.value = localStorage.getItem('foundrai_supabase_url');
+  }
+  if (supabaseKeyInput && localStorage.getItem('foundrai_supabase_key')) {
+    supabaseKeyInput.value = localStorage.getItem('foundrai_supabase_key');
+  }
+
+  if (supabaseSaveBtn) {
+    supabaseSaveBtn.addEventListener('click', () => {
+      const url = (supabaseUrlInput ? supabaseUrlInput.value.trim() : '');
+      const key = (supabaseKeyInput ? supabaseKeyInput.value.trim() : '');
+      
+      if (url && key) {
+        localStorage.setItem('foundrai_supabase_url', url);
+        localStorage.setItem('foundrai_supabase_key', key);
+        supabaseClient = null; // force re-init
+        const client = getSupabaseClient();
+        if (supabaseStatusBadge) {
+          supabaseStatusBadge.innerHTML = '<span class="status-dot done"></span> Connected';
+        }
+        if (supabaseFeedback) {
+          supabaseFeedback.style.color = '#3E7C59';
+          supabaseFeedback.textContent = '✓ Supabase credentials saved! Deliberations will be synchronized to "charters" table.';
+        }
+      } else {
+        if (supabaseFeedback) {
+          supabaseFeedback.style.color = '#c0392b';
+          supabaseFeedback.textContent = 'Please enter both Supabase Project URL and Public Anon Key.';
+        }
+      }
+    });
+  }
+
+  if (supabaseTestBtn) {
+    supabaseTestBtn.addEventListener('click', async () => {
+      const client = getSupabaseClient();
+      if (!client) {
+        if (supabaseFeedback) {
+          supabaseFeedback.style.color = '#c0392b';
+          supabaseFeedback.textContent = 'Enter and connect your Supabase credentials first.';
+        }
+        return;
+      }
+      if (supabaseFeedback) {
+        supabaseFeedback.style.color = 'var(--ink-secondary)';
+        supabaseFeedback.textContent = 'Testing connection to Supabase...';
+      }
+      try {
+        const { data, error } = await client.from('charters').select('count', { count: 'exact', head: true });
+        if (error) {
+          if (supabaseFeedback) {
+            supabaseFeedback.style.color = '#e67e22';
+            supabaseFeedback.textContent = `Connected to project, but "charters" table was not found (${error.message}). Please create the "charters" table.`;
+          }
+        } else {
+          if (supabaseFeedback) {
+            supabaseFeedback.style.color = '#3E7C59';
+            supabaseFeedback.textContent = '✓ Supabase connection verified! "charters" table is accessible.';
+          }
+        }
+      } catch (err) {
+        if (supabaseFeedback) {
+          supabaseFeedback.style.color = '#c0392b';
+          supabaseFeedback.textContent = `Connection test failed: ${err.message}`;
+        }
+      }
     });
   }
 
