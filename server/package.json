@@ -1,0 +1,26 @@
+{
+  "name": "foundrai-server",
+  "version": "1.0.0",
+  "description": "FounderAI Backend API — Auth + PostgreSQL Bridge",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.19.0",
+    "firebase-admin": "^12.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,20 @@
+app: foundrai-server
+services:
+  - type: web
+    name: foundrai-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        value: ${{DATABASE_URL}}
+      - key: FIREBASE_PROJECT_ID
+        value: REPLACE_WITH_YOUR_PROJECT_ID
+      - key: FIREBASE_CLIENT_EMAIL
+        value: REPLACE_WITH_YOUR_CLIENT_EMAIL
+      - key: FIREBASE_PRIVATE_KEY
+        value: REPLACE_WITH_YOUR_PRIVATE_KEY
+      - key: FRONTEND_ORIGIN
+        value: REPLACE_WITH_YOUR_FRONTEND_URL
+      - key: PORT
+        value: "4000"

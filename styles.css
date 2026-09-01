@@ -2050,3 +2050,122 @@ button, input, textarea, select {
   background: var(--accent-steel);
   color: #FFFFFF;
 }
+
+/* ==========================================================================
+   Auth — Tab Switcher, Message Box, Chat History
+   ========================================================================== */
+
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border-hairline);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  background: var(--bg-paper);
+  color: var(--ink-muted);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.auth-tab.active {
+  background: var(--accent-steel);
+  color: #fff;
+}
+
+.auth-tab:not(.active):hover {
+  background: var(--bg-surface-subtle);
+  color: var(--ink-primary);
+}
+
+.auth-message {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.auth-message.error {
+  background: #fdf0f0;
+  color: #c0392b;
+  border: 1px solid #f5c6c6;
+}
+
+.auth-message.success {
+  background: #f0fdf4;
+  color: #1a7f4b;
+  border: 1px solid #a7f3c8;
+}
+
+.auth-message.loading {
+  background: var(--accent-steel-light);
+  color: var(--accent-steel);
+  border: 1px solid var(--accent-steel-border);
+}
+
+/* Chat history items in profile */
+.chat-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--border-hairline);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+  gap: 10px;
+}
+
+.chat-history-item:hover {
+  background: var(--bg-surface-subtle);
+  border-color: var(--accent-steel-border);
+}
+
+.chat-history-item:last-child {
+  margin-bottom: 0;
+}
+
+.chat-history-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.chat-history-date {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.btn-delete-chat {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.btn-delete-chat:hover {
+  color: #c0392b;
+  background: #fdf0f0;
+}

@@ -420,12 +420,12 @@
   </main>
 
   <!-- =========================================================================
-       VIEW 2: LOGIN MOCKUP VIEW
+       VIEW 2: LOGIN / SIGNUP VIEW
        ========================================================================= -->
   <main id="view-login" class="view-container">
     <div class="login-view">
       <div class="login-card">
-        
+
         <div class="login-header">
           <div class="brand-mark" style="margin: 0 auto 12px; width: 36px; height: 36px; font-size: 1.1rem;">F</div>
           <h2>Executive Authentication</h2>
@@ -437,27 +437,50 @@
           <span id="login-directive-text"></span>
         </div>
 
-        <form id="mock-login-form">
-          <div class="form-group">
-            <label for="login-email">Founder Email</label>
-            <input type="email" id="login-email" value="founder@foundrai.com" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="login-password">Access Passcode</label>
-            <input type="password" id="login-password" value="••••••••••••" required>
-          </div>
+        <!-- Tab switcher -->
+        <div class="auth-tabs">
+          <button id="tab-signin" class="auth-tab active" type="button">Sign In</button>
+          <button id="tab-signup" class="auth-tab" type="button">Create Account</button>
+        </div>
 
+        <!-- Error / success message -->
+        <div id="auth-message" class="auth-message" style="display:none;"></div>
+
+        <!-- SIGN IN FORM -->
+        <form id="form-signin" class="auth-form">
+          <div class="form-group">
+            <label for="signin-email">Founder Email</label>
+            <input type="email" id="signin-email" placeholder="you@startup.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="signin-password">Password</label>
+            <input type="password" id="signin-password" placeholder="Your password" required autocomplete="current-password">
+          </div>
           <div class="login-actions">
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Authorize & Enter Boardroom</button>
-            <button type="button" class="btn btn-secondary" style="width: 100%;" data-view-target="landing">Return to Charter</button>
+            <button type="submit" id="btn-signin-submit" class="btn btn-primary" style="width:100%;">Sign In &rarr; Boardroom</button>
+            <button type="button" class="btn btn-secondary" style="width:100%;" data-view-target="landing">Return to Landing</button>
           </div>
         </form>
 
-        <div class="login-demo-bypass">
-          <div class="bypass-text">Prototype Mode Active (No Authentication Required)</div>
-          <button id="btn-login-bypass" type="button" class="btn btn-sm btn-secondary" style="font-size: 0.75rem;">Instant Bypass &rarr; Boardroom</button>
-        </div>
+        <!-- SIGN UP FORM -->
+        <form id="form-signup" class="auth-form" style="display:none;">
+          <div class="form-group">
+            <label for="signup-name">Your Name</label>
+            <input type="text" id="signup-name" placeholder="e.g. Arjun Sharma" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" placeholder="you@startup.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Password <span style="font-weight:400;color:var(--ink-muted);">(min. 6 characters)</span></label>
+            <input type="password" id="signup-password" placeholder="Choose a strong password" required autocomplete="new-password">
+          </div>
+          <div class="login-actions">
+            <button type="submit" id="btn-signup-submit" class="btn btn-primary" style="width:100%;">Create Account &rarr;</button>
+            <button type="button" class="btn btn-secondary" style="width:100%;" data-view-target="landing">Return to Landing</button>
+          </div>
+        </form>
 
       </div>
     </div>
@@ -668,11 +691,11 @@
         <!-- Profile Header -->
         <div class="profile-header-card">
           <div class="profile-avatar-row">
-            <div class="profile-avatar-large">FA</div>
+            <div class="profile-avatar-large" id="profile-avatar-initials">FA</div>
             <div>
-              <div class="profile-name">Principal Founder</div>
+              <div class="profile-name" id="profile-display-name">Principal Founder</div>
               <div class="profile-meta-line">Executive Chairman • FoundrAI Suite v1.0.4</div>
-              <div class="profile-meta-line" style="font-family: var(--font-mono); font-size: 0.78rem; margin-top: 4px;">founder@foundrai.com • ID: fdr_executive</div>
+              <div class="profile-meta-line" id="profile-email-line" style="font-family: var(--font-mono); font-size: 0.78rem; margin-top: 4px;">founder@foundrai.com</div>
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
@@ -682,38 +705,17 @@
         </div>
 
         <div class="profile-sections-grid">
-          
-          <!-- Column 1: Active Charters & History -->
+
+          <!-- Column 1: Boardroom Chat Sessions -->
           <div>
-            
+
             <div class="profile-card">
-              <h3>
-                <span>Active Startup Charters</span>
-                <span class="org-chart-badge" style="font-size: 0.72rem;">3 Ventures</span>
+              <h3 style="display:flex;align-items:center;justify-content:space-between;">
+                <span>Boardroom Sessions</span>
+                <button id="btn-new-chat" class="btn btn-primary btn-sm" style="font-size:0.72rem;">+ New Session</button>
               </h3>
-              
-              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('fitness')">
-                <div class="charter-history-info">
-                  <h4>PulseAI — Biometric Fitness Co-Pilot</h4>
-                  <div class="charter-history-meta">Status: Ratified by Executive Board • 7 Deliverables</div>
-                </div>
-                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
-              </div>
-
-              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('b2b')">
-                <div class="charter-history-info">
-                  <h4>LeadForge — Autonomous B2B Sales Agent</h4>
-                  <div class="charter-history-meta">Status: In Deliberation • 4 Deliverables</div>
-                </div>
-                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
-              </div>
-
-              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('dtc')">
-                <div class="charter-history-info">
-                  <h4>RoastClub — Algorithmic Coffee Subscription</h4>
-                  <div class="charter-history-meta">Status: Draft Phase • Market Sizing Complete</div>
-                </div>
-                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
+              <div id="chat-history-list">
+                <div style="font-size:0.85rem;color:var(--ink-muted);padding:12px 0;">Sign in to see your sessions...</div>
               </div>
             </div>
 

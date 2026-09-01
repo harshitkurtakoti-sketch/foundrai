@@ -4,6 +4,307 @@
  * agent filtering, and bidirectional charter-to-feed sync.
  */
 
+// ── FounderAI Backend API ─────────────────────────────────────────────────────
+const API_BASE = 'http://localhost:4000'; // Change to your Railway URL when deployed
+
+// ── Auth State ────────────────────────────────────────────────────────────────
+const Auth = {
+  token: localStorage.getItem('foundrai_token') || null,
+  user:  JSON.parse(localStorage.getItem('foundrai_user') || 'null'),
+
+  get isLoggedIn() { return !!this.token && !!this.user; },
+
+  save(token, user) {
+    this.token = token;
+    this.user  = user;
+    localStorage.setItem('foundrai_token', token);
+    localStorage.setItem('foundrai_user', JSON.stringify(user));
+  },
+
+  clear() {
+    this.token = null;
+    this.user  = null;
+    localStorage.removeItem('foundrai_token');
+    localStorage.removeItem('foundrai_user');
+  },
+
+  headers() {
+    return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` };
+  }
+};
+
+// ── API Helpers ───────────────────────────────────────────────────────────────
+async function apiPost(path, body) {
+  const res = await fetch(API_BASE + path, {
+    method: 'POST',
+    headers: Auth.isLoggedIn ? Auth.headers() : { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+async function apiGet(path) {
+  const res = await fetch(API_BASE + path, { headers: Auth.headers() });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+async function apiDelete(path) {
+  const res = await fetch(API_BASE + path, { method: 'DELETE', headers: Auth.headers() });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+// ── Auth UI Helpers ───────────────────────────────────────────────────────────
+function showAuthMessage(text, type = 'error') {
+  const el = document.getElementById('auth-message');
+  if (!el) return;
+  el.textContent = text;
+  el.className = `auth-message ${type}`;
+  el.style.display = 'block';
+}
+
+function hideAuthMessage() {
+  const el = document.getElementById('auth-message');
+  if (el) el.style.display = 'none';
+}
+
+function setSubmitLoading(btnId, loading, defaultText) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.textContent = loading ? 'Please wait...' : defaultText;
+}
+
+// ── Chat Session API ──────────────────────────────────────────────────────────
+const ChatAPI = {
+  currentChatId: null,
+
+  async loadAll() {
+    if (!Auth.isLoggedIn) return [];
+    try { return await apiGet('/chats'); } catch { return []; }
+  },
+
+  async create(title) {
+    if (!Auth.isLoggedIn) return null;
+    try {
+      const chat = await apiPost('/chats', { title });
+      this.currentChatId = chat.id;
+      return chat;
+    } catch (e) {
+      console.warn('Failed to create chat:', e.message);
+      return null;
+    }
+  },
+
+  async delete(id) {
+    await apiDelete(`/chats/${id}`);
+    if (this.currentChatId === id) this.currentChatId = null;
+  },
+
+  async getMessages(id) {
+    return await apiGet(`/chats/${id}/messages`);
+  },
+
+  async saveMessage(role, content, agent = null) {
+    if (!this.currentChatId || !Auth.isLoggedIn) return;
+    try {
+      await apiPost(`/chats/${this.currentChatId}/messages`, { role, content, agent });
+    } catch (e) {
+      console.warn('Failed to save message:', e.message);
+    }
+  },
+
+  async openSession(chatId, title) {
+    this.currentChatId = chatId;
+    resetBoardroom();
+    switchView('boardroom');
+    const topicTitle = document.getElementById('boardroom-topic-title');
+    if (topicTitle && title) topicTitle.textContent = title;
+
+    try {
+      const messages = await this.getMessages(chatId);
+      if (messages && messages.length > 0) {
+        messages.forEach(msg => {
+          addMessage(msg.agent || (msg.role === 'user' ? 'user' : 'ceo'), '', msg.content, { skipSave: true });
+        });
+      }
+    } catch (err) {
+      console.warn('Failed to load session messages:', err);
+    }
+  }
+};
+
+// ── Profile Page Updater ──────────────────────────────────────────────────────
+function updateProfilePage(user) {
+  if (!user) return;
+  const nameEl    = document.getElementById('profile-display-name');
+  const emailEl   = document.getElementById('profile-email-line');
+  const avatarEl  = document.getElementById('profile-avatar-initials');
+  const userLabel = document.querySelector('.header-user-label');
+
+  if (nameEl)    nameEl.textContent  = user.display_name || 'Founder';
+  if (emailEl)   emailEl.textContent = user.email || '';
+  if (avatarEl)  avatarEl.textContent = (user.display_name || 'FA').slice(0, 2).toUpperCase();
+  if (userLabel) userLabel.textContent = user.display_name ? user.display_name.split(' ')[0] : 'Founder';
+}
+
+async function renderChatHistory() {
+  const list = document.getElementById('chat-history-list');
+  if (!list) return;
+
+  if (!Auth.isLoggedIn) {
+    list.innerHTML = '<div style="font-size:0.85rem;color:var(--ink-muted);padding:12px 0;">Sign in to see your sessions.</div>';
+    return;
+  }
+
+  list.innerHTML = '<div style="font-size:0.85rem;color:var(--ink-muted);padding:8px 0;">Loading sessions...</div>';
+
+  const chats = await ChatAPI.loadAll();
+
+  if (chats.length === 0) {
+    list.innerHTML = '<div style="font-size:0.85rem;color:var(--ink-muted);padding:12px 0;">No sessions yet. Start a new boardroom session!</div>';
+    return;
+  }
+
+  list.innerHTML = chats.map(chat => {
+    const date = new Date(chat.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    return `
+      <div class="chat-history-item" data-chat-id="${chat.id}" data-chat-title="${escapeHtml(chat.title)}">
+        <span class="chat-history-title">${escapeHtml(chat.title)}</span>
+        <span class="chat-history-date">${date}</span>
+        <button class="btn-delete-chat" data-delete-chat="${chat.id}" title="Delete session">✕</button>
+      </div>
+    `;
+  }).join('');
+
+  list.querySelectorAll('.chat-history-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-delete-chat')) return;
+      const chatId = item.getAttribute('data-chat-id');
+      const title = item.getAttribute('data-chat-title');
+      ChatAPI.openSession(chatId, title);
+    });
+  });
+
+  list.querySelectorAll('.btn-delete-chat').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = btn.getAttribute('data-delete-chat');
+      if (!confirm('Delete this session?')) return;
+      try {
+        await ChatAPI.delete(id);
+        renderChatHistory();
+      } catch (err) {
+        alert('Failed to delete: ' + err.message);
+      }
+    });
+  });
+}
+
+function escapeHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Bootstrap Auth on Page Load ───────────────────────────────────────────────
+function bootstrapAuth() {
+  if (Auth.isLoggedIn) {
+    state.isAuthenticated = true;
+    updateProfilePage(Auth.user);
+  }
+
+  // Tab switcher
+  document.getElementById('tab-signin')?.addEventListener('click', () => {
+    document.getElementById('tab-signin').classList.add('active');
+    document.getElementById('tab-signup').classList.remove('active');
+    document.getElementById('form-signin').style.display = '';
+    document.getElementById('form-signup').style.display = 'none';
+    hideAuthMessage();
+  });
+
+  document.getElementById('tab-signup')?.addEventListener('click', () => {
+    document.getElementById('tab-signup').classList.add('active');
+    document.getElementById('tab-signin').classList.remove('active');
+    document.getElementById('form-signup').style.display = '';
+    document.getElementById('form-signin').style.display = 'none';
+    hideAuthMessage();
+  });
+
+  // Sign In
+  document.getElementById('form-signin')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAuthMessage();
+    const email    = document.getElementById('signin-email').value.trim();
+    const password = document.getElementById('signin-password').value;
+    setSubmitLoading('btn-signin-submit', true, 'Sign In → Boardroom');
+    try {
+      const { token, user } = await apiPost('/auth/login', { email, password });
+      Auth.save(token, user);
+      state.isAuthenticated = true;
+      updateProfilePage(user);
+      showAuthMessage('Welcome back, ' + (user.display_name || 'Founder') + '!', 'success');
+      setTimeout(() => {
+        hideAuthMessage();
+        switchView(state.pendingPrompt ? 'boardroom' : 'boardroom');
+        if (state.pendingPrompt) {
+          const p = state.pendingPrompt;
+          state.pendingPrompt = '';
+          runSimulation(p);
+        }
+      }, 800);
+    } catch (err) {
+      showAuthMessage(err.message, 'error');
+    } finally {
+      setSubmitLoading('btn-signin-submit', false, 'Sign In → Boardroom');
+    }
+  });
+
+  // Sign Up
+  document.getElementById('form-signup')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAuthMessage();
+    const name     = document.getElementById('signup-name').value.trim();
+    const email    = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    setSubmitLoading('btn-signup-submit', true, 'Create Account →');
+    try {
+      const { token, user } = await apiPost('/auth/signup', { email, password, display_name: name });
+      Auth.save(token, user);
+      state.isAuthenticated = true;
+      updateProfilePage(user);
+      showAuthMessage('Account created! Welcome, ' + (user.display_name || 'Founder') + '!', 'success');
+      setTimeout(() => { hideAuthMessage(); switchView('boardroom'); }, 800);
+    } catch (err) {
+      showAuthMessage(err.message, 'error');
+    } finally {
+      setSubmitLoading('btn-signup-submit', false, 'Create Account →');
+    }
+  });
+
+  // Sign Out (header + profile page button)
+  document.getElementById('btn-header-signout')?.addEventListener('click', doSignOut);
+  document.getElementById('btn-profile-signout')?.addEventListener('click', doSignOut);
+
+  // New Chat button on profile
+  document.getElementById('btn-new-chat')?.addEventListener('click', () => {
+    ChatAPI.currentChatId = null;
+    switchView('boardroom');
+  });
+}
+
+function doSignOut() {
+  Auth.clear();
+  state.isAuthenticated = false;
+  ChatAPI.currentChatId = null;
+  resetBoardroom();
+  switchView('landing');
+}
+
+
 // ── AI Engine Configuration ──────────────────────────────────────────────────
 // Groq AI API Configuration (Autonomous Multi-Agent Executive Intelligence)
 const GROQ_CONFIG = {
@@ -403,11 +704,12 @@ function updateHeaderAuthState() {
 
 // Navigation
 function switchView(viewName) {
-  state.currentView = viewName;
-  
-  if (viewName === 'boardroom' || viewName === 'profile') {
-    state.isAuthenticated = true;
+  if (viewName === 'profile' && !Auth.isLoggedIn) {
+    viewName = 'login';
   }
+
+  state.currentView = viewName;
+  state.isAuthenticated = Auth.isLoggedIn;
 
   // Toggle View Containers
   Object.keys(views).forEach(key => {
@@ -423,6 +725,9 @@ function switchView(viewName) {
 
   if (viewName === 'boardroom') {
     switchBoardroomMobileTab('feed');
+  }
+  if (viewName === 'profile') {
+    renderChatHistory();
   }
 
   updateHeaderAuthState();
@@ -628,6 +933,11 @@ function addMessage(agentId, title, content, meta = {}) {
   }
 
   feed.scrollTop = feed.scrollHeight;
+
+  // Auto-save message to database if active chat session exists
+  if (!meta.skipSave && Auth.isLoggedIn && ChatAPI.currentChatId) {
+    ChatAPI.saveMessage(agentId === 'user' ? 'user' : 'agent', content, agentId);
+  }
 }
 
 // Quick action: Direct query an agent
@@ -881,6 +1191,11 @@ async function runSimulation(promptText, presetKey = 'fitness') {
     topicTitle.textContent = preset.topic || initialPrompt;
   }
 
+  // Auto-create chat session in DB if authenticated
+  if (Auth.isLoggedIn && !ChatAPI.currentChatId) {
+    await ChatAPI.create(preset.topic || initialPrompt);
+  }
+
   // 1. Post Founder Directive to Feed
   addMessage('user', 'Founding Directive', `<p>${initialPrompt}</p>`, {
     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -1048,6 +1363,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginDirectiveText = document.getElementById('login-directive-text');
 
   function queueDirectiveAndGoToLogin(promptText, presetKey = 'fitness') {
+    if (Auth.isLoggedIn) {
+      runSimulation(promptText, presetKey);
+      return;
+    }
+
     state.pendingPrompt = promptText;
     state.pendingPreset = presetKey;
 
@@ -1286,6 +1606,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Initialize Auth listeners and load user state
+  bootstrapAuth();
 
   // Default view
   switchView('landing');
