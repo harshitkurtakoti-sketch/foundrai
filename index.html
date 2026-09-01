@@ -618,10 +618,57 @@
           </div>
 
           <div id="boardroom-feed" class="feed-container">
-            <!-- Dynamically populated via addMessage() -->
+            <!-- Initial Interactive Boardroom Welcome State -->
+            <div id="feed-empty-state" class="feed-empty-state">
+              <div class="empty-state-avatar-cluster">
+                <div class="empty-avatar-circle" data-agent="ceo" title="CEO Agent">👑</div>
+                <div class="empty-avatar-circle" data-agent="research" title="Research Agent">🔬</div>
+                <div class="empty-avatar-circle" data-agent="engineer" title="Software Engineer">⚙️</div>
+                <div class="empty-avatar-circle" data-agent="designer" title="Designer Agent">🎨</div>
+                <div class="empty-avatar-circle" data-agent="marketing" title="Marketing Agent">📈</div>
+                <div class="empty-avatar-circle" data-agent="finance" title="Finance Agent">💰</div>
+                <div class="empty-avatar-circle" data-agent="legal" title="Legal Agent">⚖️</div>
+              </div>
+              <h3 class="empty-state-title">Autonomous Boardroom In Session</h3>
+              <p class="empty-state-subtitle">7 specialized AI executives are standing by to deliberate, architect, and ratify your startup charter.</p>
+              
+              <div class="empty-state-chips-title">TAP A VENTURE DIRECTIVE TO CONVENE:</div>
+              <div class="empty-state-chips">
+                <button type="button" class="empty-chip" onclick="quickLaunchDirective('fitness')">
+                  <span class="chip-icon">⚡</span>
+                  <span class="chip-content">
+                    <strong>PulseAI Fitness</strong>
+                    <span>Biometric AI co-pilot</span>
+                  </span>
+                  <span class="chip-arrow">&rarr;</span>
+                </button>
+                <button type="button" class="empty-chip" onclick="quickLaunchDirective('b2b')">
+                  <span class="chip-icon">🚀</span>
+                  <span class="chip-content">
+                    <strong>LeadForge Sales</strong>
+                    <span>Autonomous B2B outbound</span>
+                  </span>
+                  <span class="chip-arrow">&rarr;</span>
+                </button>
+                <button type="button" class="empty-chip" onclick="quickLaunchDirective('dtc')">
+                  <span class="chip-icon">☕</span>
+                  <span class="chip-content">
+                    <strong>RoastClub DTC</strong>
+                    <span>Algorithmic coffee subscription</span>
+                  </span>
+                  <span class="chip-arrow">&rarr;</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <div class="boardroom-input-container">
+            <div class="input-quick-bar">
+              <button type="button" class="input-quick-pill" onclick="insertDirectivePrompt('Explain unit economics, ARPU, and CAC targets')">💰 Unit Economics</button>
+              <button type="button" class="input-quick-pill" onclick="insertDirectivePrompt('Detail system architecture, tech stack & cloud pipeline')">⚙️ Cloud Stack</button>
+              <button type="button" class="input-quick-pill" onclick="insertDirectivePrompt('Review GDPR compliance, data privacy & IP safe harbors')">⚖️ Legal Safe Harbor</button>
+              <button type="button" class="input-quick-pill" onclick="insertDirectivePrompt('Draft 90-day viral GTM customer acquisition loops')">📈 Viral GTM</button>
+            </div>
             <form id="boardroom-form" class="input-box-wrapper">
               <input 
                 type="text" 
@@ -630,7 +677,10 @@
                 placeholder="Issue a directive to the team..." 
                 autocomplete="off"
               />
-              <button type="submit" class="btn btn-primary">Dispatch</button>
+              <button type="submit" class="btn btn-primary" id="btn-boardroom-dispatch">
+                <span class="btn-dispatch-icon">⚡</span>
+                <span class="btn-dispatch-text">Dispatch</span>
+              </button>
             </form>
           </div>
 

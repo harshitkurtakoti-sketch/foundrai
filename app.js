@@ -1023,10 +1023,81 @@ function filterFeed(agentId) {
   }
 }
 
+// Helper to render feed empty state
+function renderFeedEmptyState() {
+  const feed = document.getElementById('boardroom-feed');
+  if (!feed) return;
+  feed.innerHTML = `
+    <div id="feed-empty-state" class="feed-empty-state">
+      <div class="empty-state-avatar-cluster">
+        <div class="empty-avatar-circle" data-agent="ceo" title="CEO Agent">👑</div>
+        <div class="empty-avatar-circle" data-agent="research" title="Research Agent">🔬</div>
+        <div class="empty-avatar-circle" data-agent="engineer" title="Software Engineer">⚙️</div>
+        <div class="empty-avatar-circle" data-agent="designer" title="Designer Agent">🎨</div>
+        <div class="empty-avatar-circle" data-agent="marketing" title="Marketing Agent">📈</div>
+        <div class="empty-avatar-circle" data-agent="finance" title="Finance Agent">💰</div>
+        <div class="empty-avatar-circle" data-agent="legal" title="Legal Agent">⚖️</div>
+      </div>
+      <h3 class="empty-state-title">Autonomous Boardroom In Session</h3>
+      <p class="empty-state-subtitle">7 specialized AI executives are standing by to deliberate, architect, and ratify your startup charter.</p>
+      
+      <div class="empty-state-chips-title">TAP A VENTURE DIRECTIVE TO CONVENE:</div>
+      <div class="empty-state-chips">
+        <button type="button" class="empty-chip" onclick="quickLaunchDirective('fitness')">
+          <span class="chip-icon">⚡</span>
+          <span class="chip-content">
+            <strong>PulseAI Fitness</strong>
+            <span>Biometric AI co-pilot</span>
+          </span>
+          <span class="chip-arrow">&rarr;</span>
+        </button>
+        <button type="button" class="empty-chip" onclick="quickLaunchDirective('b2b')">
+          <span class="chip-icon">🚀</span>
+          <span class="chip-content">
+            <strong>LeadForge Sales</strong>
+            <span>Autonomous B2B outbound</span>
+          </span>
+          <span class="chip-arrow">&rarr;</span>
+        </button>
+        <button type="button" class="empty-chip" onclick="quickLaunchDirective('dtc')">
+          <span class="chip-icon">☕</span>
+          <span class="chip-content">
+            <strong>RoastClub DTC</strong>
+            <span>Algorithmic coffee subscription</span>
+          </span>
+          <span class="chip-arrow">&rarr;</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Global helpers for quick directive launch and prompt pills
+window.quickLaunchDirective = function(presetKey) {
+  const preset = PRESETS[presetKey];
+  if (preset) {
+    const input = document.getElementById('boardroom-input');
+    if (input) input.value = '';
+    runSimulation(preset.prompt, presetKey);
+  }
+};
+
+window.insertDirectivePrompt = function(text) {
+  const input = document.getElementById('boardroom-input');
+  if (input) {
+    input.value = text;
+    input.focus();
+  }
+};
+
 // Add Structured Meeting Note Message to Feed
 function addMessage(agentId, title, content, meta = {}) {
   const feed = document.getElementById('boardroom-feed');
   if (!feed) return;
+
+  // Clear empty state if present
+  const emptyState = document.getElementById('feed-empty-state');
+  if (emptyState) emptyState.remove();
 
   const agent = AGENT_REGISTRY[agentId] || {
     name: agentId === 'user' ? 'Founder' : 'System',
@@ -1156,7 +1227,9 @@ function resetBoardroom() {
   setStage(1);
 
   const feed = document.getElementById('boardroom-feed');
-  if (feed) feed.innerHTML = '';
+  if (feed) {
+    renderFeedEmptyState();
+  }
 
   Object.keys(AGENT_REGISTRY).forEach(agentId => {
     setStatus(agentId, 'idle');
