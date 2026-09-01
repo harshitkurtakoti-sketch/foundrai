@@ -1,0 +1,2893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FounderAI — Coordinated AI Executive Founding Team</title>
+  <meta name="description" content="Replace the executive team a founder hires with a coordinated multi-agent AI squad: CEO, Research, Engineering, Marketing, Finance, Legal, and Design.">
+  <style>
+/* ==========================================================================
+   FounderAI — Design System & Stylesheet
+   Metaphor: Company Charter & Executive Staff Directory
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core Brand Tokens */
+  --bg-paper: #FAF7F1;
+  --bg-surface: #FFFFFF;
+  --bg-surface-subtle: #F3EFE6;
+  --bg-surface-elevated: #FFFFFF;
+  
+  --ink-primary: #1B2233;
+  --ink-secondary: #4A5568;
+  --ink-muted: #7A869A;
+  --ink-faint: #A0AEC0;
+  
+  /* Primary Accent: Steel Blue */
+  --accent-steel: #3E6B8C;
+  --accent-steel-hover: #325772;
+  --accent-steel-light: #EBF2F7;
+  --accent-steel-border: #BCD0DF;
+  
+  /* Hairline Dividers */
+  --border-hairline: #E3DCD1;
+  --border-strong: #CFC5B6;
+  --border-focus: #3E6B8C;
+  
+  /* Per-Agent Color Indicators */
+  --agent-ceo: #1B2233;        /* Ink Slate */
+  --agent-research: #2F6F7E;   /* Muted Teal */
+  --agent-engineer: #2A4B7C;   /* Navy Blue */
+  --agent-marketing: #8E413C;  /* Brick */
+  --agent-finance: #4E6A3E;    /* Olive */
+  --agent-legal: #6E3B68;      /* Plum */
+  --agent-designer: #7A6048;   /* Warm Bronze / Taupe */
+  
+  /* Status Colors */
+  --status-idle: #A0AEC0;
+  --status-active: #3E6B8C;
+  --status-done: #3E7C59;
+  
+  /* Typography */
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  /* Spacing Rhythm */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  
+  /* Layout */
+  --max-width-content: 1160px;
+  --header-height: 64px;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background-color: var(--bg-paper);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--ink-primary);
+  background-color: var(--bg-paper);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography Defaults */
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink-primary);
+}
+
+h1 { font-size: 2.75rem; letter-spacing: -0.02em; }
+h2 { font-size: 2rem; letter-spacing: -0.015em; }
+h3 { font-size: 1.4rem; letter-spacing: -0.01em; }
+h4 { font-size: 1.1rem; font-weight: 600; }
+
+p {
+  color: var(--ink-secondary);
+  font-size: 1rem;
+}
+
+a {
+  color: var(--accent-steel);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--accent-steel-hover);
+}
+
+/* Base Buttons & Inputs */
+button, input, textarea, select {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--accent-steel);
+  color: #FFFFFF;
+  border-color: var(--accent-steel);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-steel-hover);
+  border-color: var(--accent-steel-hover);
+  color: #FFFFFF;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--ink-primary);
+  border-color: var(--border-strong);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--ink-primary);
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Hairline Container */
+.container {
+  width: 100%;
+  max-width: var(--max-width-content);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* Header & Navigation */
+.site-header {
+  height: var(--header-height);
+  background-color: var(--bg-paper);
+  border-bottom: 1px solid var(--border-hairline);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: var(--accent-steel);
+  color: #FFFFFF;
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  list-style: none;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ink-secondary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: var(--ink-primary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* Views Manager */
+.view-container {
+  display: none;
+  flex: 1;
+}
+
+.view-container.active {
+  display: block;
+}
+
+/* 1. LANDING PAGE VIEW */
+.hero-section {
+  padding: var(--spacing-3xl) 0 var(--spacing-2xl);
+  border-bottom: 1px solid var(--border-hairline);
+  background-color: var(--bg-paper);
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-steel);
+  background-color: var(--accent-steel-light);
+  border: 1px solid var(--accent-steel-border);
+  padding: 4px 10px;
+  margin-bottom: var(--spacing-md);
+  border-radius: 2px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--spacing-2xl);
+  align-items: start;
+}
+
+.hero-title {
+  font-size: 3.1rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--ink-primary);
+  line-height: 1.15;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--accent-steel);
+  font-weight: 400;
+}
+
+.hero-lead {
+  font-size: 1.1rem;
+  color: var(--ink-secondary);
+  margin-bottom: var(--spacing-xl);
+  max-width: 540px;
+  line-height: 1.6;
+}
+
+.hero-prompt-box {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  padding: var(--spacing-lg);
+  border-radius: 2px;
+  margin-bottom: var(--spacing-xl);
+}
+
+.prompt-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  margin-bottom: 10px;
+}
+
+.prompt-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.prompt-input-row input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid var(--border-hairline);
+  background-color: var(--bg-paper);
+  color: var(--ink-primary);
+  border-radius: 2px;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.prompt-input-row input:focus {
+  border-color: var(--accent-steel);
+  background-color: #FFFFFF;
+}
+
+.prompt-quick-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.quick-tag-label {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.quick-tag {
+  font-size: 0.8rem;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-hairline);
+  padding: 3px 9px;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.1s ease;
+}
+
+.quick-tag:hover {
+  background-color: var(--accent-steel-light);
+  border-color: var(--accent-steel-border);
+  color: var(--accent-steel);
+}
+
+.org-chart-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  padding: var(--spacing-lg);
+  border-radius: 2px;
+}
+
+.org-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.org-chart-header h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-sans);
+  color: var(--ink-muted);
+}
+
+.org-chart-badge {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  background-color: var(--bg-surface-subtle);
+  padding: 2px 6px;
+  border: 1px solid var(--border-hairline);
+  border-radius: 2px;
+}
+
+.org-chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Roster Section */
+.roster-section {
+  padding: var(--spacing-3xl) 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.section-meta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-steel);
+  margin-bottom: 6px;
+}
+
+.roster-directory {
+  display: grid;
+  grid-template-columns: 1fr;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: 2px;
+}
+
+.roster-entry {
+  display: grid;
+  grid-template-columns: 240px 1.4fr 1fr 140px;
+  gap: var(--spacing-md);
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-hairline);
+  border-left: 4px solid transparent;
+  transition: background-color 0.12s ease;
+}
+
+.roster-entry:last-child {
+  border-bottom: none;
+}
+
+.roster-entry:hover {
+  background-color: var(--bg-surface-subtle);
+}
+
+.roster-entry[data-agent="ceo"] { border-left-color: var(--agent-ceo); }
+.roster-entry[data-agent="research"] { border-left-color: var(--agent-research); }
+.roster-entry[data-agent="engineer"] { border-left-color: var(--agent-engineer); }
+.roster-entry[data-agent="marketing"] { border-left-color: var(--agent-marketing); }
+.roster-entry[data-agent="finance"] { border-left-color: var(--agent-finance); }
+.roster-entry[data-agent="legal"] { border-left-color: var(--agent-legal); }
+.roster-entry[data-agent="designer"] { border-left-color: var(--agent-designer); }
+
+.roster-role-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.roster-role-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.roster-role-subtitle {
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--ink-muted);
+}
+
+.roster-desc-col {
+  font-size: 0.9rem;
+  color: var(--ink-secondary);
+  line-height: 1.45;
+}
+
+.roster-tags-col {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.roster-tag {
+  font-size: 0.75rem;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-hairline);
+  padding: 2px 6px;
+  color: var(--ink-secondary);
+  border-radius: 2px;
+}
+
+.roster-status-col {
+  text-align: right;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-secondary);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--status-idle);
+  display: inline-block;
+}
+
+.status-dot.active {
+  background-color: var(--accent-steel);
+  box-shadow: 0 0 0 3px rgba(62, 107, 140, 0.2);
+  animation: pulse 1.8s infinite;
+}
+
+.status-dot.done {
+  background-color: var(--status-done);
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Document Mockup Section */
+.mockup-section {
+  padding: var(--spacing-3xl) 0;
+  background-color: var(--bg-surface-subtle);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.charter-doc-mockup {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  padding: var(--spacing-2xl);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.charter-header-band {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+  border-bottom: 2px solid var(--ink-primary);
+}
+
+.charter-doc-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.charter-doc-meta {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  text-align: right;
+}
+
+.charter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+}
+
+.charter-card {
+  border-left: 3px solid var(--border-strong);
+  padding-left: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.charter-card.card-ceo { border-left-color: var(--agent-ceo); }
+.charter-card.card-research { border-left-color: var(--agent-research); }
+.charter-card.card-engineer { border-left-color: var(--agent-engineer); }
+.charter-card.card-finance { border-left-color: var(--agent-finance); }
+
+.charter-card h4 {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-primary);
+  margin-bottom: 6px;
+}
+
+.charter-card p {
+  font-size: 0.88rem;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+}
+
+.charter-disclaimer-box {
+  background-color: var(--bg-paper);
+  border: 1px solid var(--border-hairline);
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  line-height: 1.45;
+}
+
+/* How It Works Section */
+.workflow-section {
+  padding: var(--spacing-3xl) 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-2xl);
+}
+
+.step-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  padding: var(--spacing-xl);
+  border-radius: 2px;
+}
+
+.step-number {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent-steel);
+  line-height: 1;
+  margin-bottom: var(--spacing-md);
+}
+
+.step-title {
+  font-size: 1.2rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.step-desc {
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+/* Site Footer */
+.site-footer {
+  padding: var(--spacing-2xl) 0 var(--spacing-3xl);
+  background-color: var(--bg-paper);
+  border-top: 1px solid var(--border-hairline);
+  margin-top: auto;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-note {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+/* 2. LOGIN VIEW */
+.login-view {
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl) var(--spacing-md);
+}
+
+.login-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  width: 100%;
+  max-width: 440px;
+  padding: var(--spacing-2xl);
+  border-radius: 2px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.login-header h2 {
+  font-size: 1.75rem;
+  margin-bottom: 6px;
+}
+
+.login-directive-banner {
+  background-color: var(--accent-steel-light);
+  border: 1px solid var(--accent-steel-border);
+  padding: 10px 12px;
+  border-radius: 2px;
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.82rem;
+  color: var(--accent-steel);
+  line-height: 1.45;
+  display: none;
+}
+
+.login-directive-banner.visible {
+  display: block;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.login-directive-banner strong {
+  display: block;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: var(--bg-paper);
+  border: 1px solid var(--border-hairline);
+  color: var(--ink-primary);
+  border-radius: 2px;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: var(--accent-steel);
+  background-color: #FFFFFF;
+}
+
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: var(--spacing-lg);
+}
+
+.login-demo-bypass {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px dashed var(--border-hairline);
+  text-align: center;
+}
+
+.bypass-text {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin-bottom: 8px;
+}
+
+/* 3. BOARDROOM INTERFACE (ENHANCED) */
+.boardroom-view {
+  height: calc(100vh - var(--header-height));
+  display: flex;
+  overflow: hidden;
+  background-color: var(--bg-paper);
+}
+
+.boardroom-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 340px;
+  width: 100%;
+  height: 100%;
+}
+
+.boardroom-sidebar {
+  background-color: var(--bg-paper);
+  border-right: 1px solid var(--border-hairline);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h3 {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-sans);
+  color: var(--ink-muted);
+}
+
+.sidebar-filter-indicator {
+  display: none;
+  padding: 6px 18px;
+  background-color: var(--accent-steel-light);
+  border-bottom: 1px solid var(--accent-steel-border);
+  font-size: 0.76rem;
+  color: var(--accent-steel);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-filter-indicator.active {
+  display: flex;
+}
+
+.sidebar-roster-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-agent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-hairline);
+  border-left: 4px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.sidebar-agent-item:hover {
+  background-color: var(--bg-surface-subtle);
+}
+
+.sidebar-agent-item.selected {
+  background-color: var(--accent-steel-light);
+}
+
+.sidebar-agent-item[data-agent="ceo"] { border-left-color: var(--agent-ceo); }
+.sidebar-agent-item[data-agent="research"] { border-left-color: var(--agent-research); }
+.sidebar-agent-item[data-agent="engineer"] { border-left-color: var(--agent-engineer); }
+.sidebar-agent-item[data-agent="marketing"] { border-left-color: var(--agent-marketing); }
+.sidebar-agent-item[data-agent="finance"] { border-left-color: var(--agent-finance); }
+.sidebar-agent-item[data-agent="legal"] { border-left-color: var(--agent-legal); }
+.sidebar-agent-item[data-agent="designer"] { border-left-color: var(--agent-designer); }
+
+.sidebar-agent-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-agent-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.sidebar-agent-role {
+  font-size: 0.74rem;
+  color: var(--ink-muted);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--border-hairline);
+}
+
+.boardroom-main {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-surface);
+  overflow: hidden;
+}
+
+.boardroom-topbar {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-paper);
+}
+
+.topbar-topic {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topic-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.topic-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+/* Progress Tracker */
+.deliberation-progress-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 24px;
+  background-color: var(--bg-surface-subtle);
+  border-bottom: 1px solid var(--border-hairline);
+  font-size: 0.76rem;
+}
+
+.stage-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-muted);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.stage-step.active {
+  color: var(--accent-steel);
+  font-weight: 600;
+}
+
+.stage-step.completed {
+  color: var(--status-done);
+}
+
+.stage-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--border-strong);
+}
+
+.stage-step.active .stage-bullet {
+  background-color: var(--accent-steel);
+  box-shadow: 0 0 0 2px rgba(62, 107, 140, 0.25);
+}
+
+.stage-step.completed .stage-bullet {
+  background-color: var(--status-done);
+}
+
+.stage-arrow {
+  color: var(--border-strong);
+  font-size: 0.7rem;
+}
+
+.feed-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.meeting-note {
+  border-left: 4px solid var(--border-strong);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--bg-paper);
+  border-radius: 0 2px 2px 0;
+  border-top: 1px solid var(--border-hairline);
+  border-right: 1px solid var(--border-hairline);
+  border-bottom: 1px solid var(--border-hairline);
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.meeting-note.highlight-pulse {
+  animation: notePulse 1.2s ease-in-out;
+}
+
+@keyframes notePulse {
+  0% { outline: 2px solid var(--accent-steel); }
+  50% { outline: 2px solid rgba(62, 107, 140, 0.4); }
+  100% { outline: 2px solid transparent; }
+}
+
+.meeting-note[data-agent="user"] {
+  border-left-color: var(--ink-muted);
+  background-color: var(--bg-surface-subtle);
+}
+
+.meeting-note[data-agent="ceo"] { border-left-color: var(--agent-ceo); }
+.meeting-note[data-agent="research"] { border-left-color: var(--agent-research); }
+.meeting-note[data-agent="engineer"] { border-left-color: var(--agent-engineer); }
+.meeting-note[data-agent="marketing"] { border-left-color: var(--agent-marketing); }
+.meeting-note[data-agent="finance"] { border-left-color: var(--agent-finance); }
+.meeting-note[data-agent="legal"] { border-left-color: var(--agent-legal); }
+.meeting-note[data-agent="designer"] { border-left-color: var(--agent-designer); }
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.note-agent-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.note-agent-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background-color: var(--bg-surface-subtle);
+  color: var(--ink-primary);
+}
+
+.note-time {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.agent-reasoning-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+  color: var(--ink-muted);
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-hairline);
+  padding: 2px 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  user-select: none;
+}
+
+.agent-reasoning-toggle:hover {
+  background-color: #EAE4D7;
+  color: var(--ink-primary);
+}
+
+.agent-reasoning-content {
+  display: none;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  background-color: #F8F5EE;
+  border-left: 2px solid var(--border-strong);
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  color: var(--ink-secondary);
+  line-height: 1.45;
+}
+
+.agent-reasoning-content.open {
+  display: block;
+}
+
+.note-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-hairline);
+}
+
+.note-action-btn {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.note-action-btn:hover {
+  color: var(--accent-steel);
+}
+
+.note-body {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--ink-secondary);
+}
+
+.note-body p {
+  margin-bottom: 8px;
+}
+
+.note-body p:last-child {
+  margin-bottom: 0;
+}
+
+.note-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 0.85rem;
+}
+
+.note-body th, .note-body td {
+  border: 1px solid var(--border-hairline);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.note-body th {
+  background-color: var(--bg-surface-subtle);
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.note-body code {
+  font-family: var(--font-mono);
+  background-color: var(--bg-surface-subtle);
+  padding: 2px 5px;
+  font-size: 0.85em;
+  border-radius: 2px;
+}
+
+.note-body pre {
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-hairline);
+  padding: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+.disclaimer-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background-color: #FFFDF7;
+  border: 1px solid #E6D7B8;
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: #7B6236;
+  border-radius: 2px;
+}
+
+.disclaimer-banner strong {
+  color: #58441F;
+}
+
+.boardroom-input-container {
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-top: 1px solid var(--border-hairline);
+  background-color: var(--bg-paper);
+}
+
+.input-box-wrapper {
+  display: flex;
+  gap: 10px;
+}
+
+.boardroom-input {
+  flex: 1;
+  padding: 12px 14px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--ink-primary);
+  border-radius: 2px;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.boardroom-input:focus {
+  border-color: var(--accent-steel);
+}
+
+.boardroom-charter-panel {
+  background-color: var(--bg-paper);
+  border-left: 1px solid var(--border-hairline);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.panel-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header h3 {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-sans);
+  color: var(--ink-muted);
+}
+
+.charter-live-content {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.charter-section-block {
+  border-left: 3px solid var(--border-hairline);
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.charter-section-block:hover {
+  background-color: var(--bg-surface-subtle);
+  border-radius: 2px;
+}
+
+.charter-section-block.filled {
+  border-left-color: var(--accent-steel);
+}
+
+.charter-section-block h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-primary);
+  margin-bottom: 4px;
+}
+
+.charter-section-block p {
+  font-size: 0.82rem;
+  color: var(--ink-secondary);
+}
+
+/* Floating Demo Bar */
+.floating-demo-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 9999;
+  background-color: var(--ink-primary);
+  color: #FFFFFF;
+  padding: 6px 10px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 0.8rem;
+}
+
+.demo-bar-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #A0AEC0;
+  padding-right: 4px;
+  border-right: 1px solid #334155;
+}
+
+.demo-btn-group {
+  display: flex;
+  gap: 4px;
+}
+
+.demo-view-btn {
+  background-color: #2A344A;
+  color: #FFFFFF;
+  border: 1px solid #425270;
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.demo-view-btn:hover {
+  background-color: var(--accent-steel);
+  border-color: var(--accent-steel);
+}
+
+.demo-view-btn.active {
+  background-color: var(--accent-steel);
+  border-color: var(--accent-steel-border);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   4. PROFILE VIEW
+   ========================================================================== */
+.profile-view {
+  min-height: calc(100vh - var(--header-height));
+  padding: var(--spacing-2xl) 0 var(--spacing-3xl);
+  background-color: var(--bg-paper);
+}
+
+.profile-header-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  padding: var(--spacing-xl);
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.profile-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.profile-avatar-large {
+  width: 64px;
+  height: 64px;
+  background-color: var(--accent-steel);
+  color: #FFFFFF;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+
+.profile-name {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+  margin-bottom: 2px;
+}
+
+.profile-meta-line {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.profile-sections-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: var(--spacing-xl);
+}
+
+.profile-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  padding: var(--spacing-xl);
+  border-radius: 2px;
+  margin-bottom: var(--spacing-xl);
+}
+
+.profile-card h3 {
+  font-size: 1.15rem;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.charter-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background-color: var(--bg-paper);
+  border: 1px solid var(--border-hairline);
+  border-radius: 2px;
+  margin-bottom: 8px;
+  transition: all 0.12s ease;
+}
+
+.charter-history-item:hover {
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--accent-steel-border);
+}
+
+.charter-history-info h4 {
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.charter-history-meta {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+}
+
+.agent-pref-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.agent-pref-row:last-child {
+  border-bottom: none;
+}
+
+.agent-pref-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.agent-pref-status {
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--status-done);
+}
+
+@media (max-width: 992px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .workflow-steps { grid-template-columns: 1fr; }
+  .charter-grid { grid-template-columns: 1fr; }
+  .roster-entry { grid-template-columns: 1fr; gap: 8px; }
+  .roster-status-col { text-align: left; }
+  .boardroom-layout { grid-template-columns: 1fr; }
+  .boardroom-sidebar, .boardroom-charter-panel { display: none; }
+}
+  </style>
+</head>
+<body>
+
+  <!-- Site Navigation Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="#" class="brand-logo" data-view-target="landing">
+        <span class="brand-mark">F</span>
+        <span>FounderAI</span>
+      </a>
+      <!-- Dynamic Header Actions based on Auth State -->
+      <div id="header-actions-guest" class="header-actions">
+        <button class="btn btn-secondary btn-sm" data-view-target="login">Sign In</button>
+        <button class="btn btn-primary btn-sm" data-view-target="login">Enter Boardroom</button>
+      </div>
+
+      <div id="header-actions-auth" class="header-actions" style="display: none;">
+        <button class="btn btn-secondary btn-sm" data-view-target="profile">
+          <span>👤</span> <span>Taarun K (Founder)</span>
+        </button>
+        <button id="btn-header-boardroom" class="btn btn-primary btn-sm" data-view-target="boardroom">Boardroom</button>
+        <button id="btn-header-signout" class="btn btn-secondary btn-sm" style="color: var(--ink-muted);">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       VIEW 1: LANDING PAGE
+       ========================================================================= -->
+  <main id="view-landing" class="view-container active">
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <div class="hero-content">
+            <div class="hero-badge">Autonomous Executive Suite</div>
+            <h1 class="hero-title">Your complete founding team. <em>Coordinated by AI.</em></h1>
+            <p class="hero-lead">
+              FounderAI replaces the multidisciplinary team a founder hires—CEO, developer, marketer, finance lead, designer, and legal advisor—with a coordinated roster of autonomous AI specialists working in parallel.
+            </p>
+
+            <!-- Hero Idea Prompt Box -->
+            <div class="hero-prompt-box">
+              <label for="hero-prompt-input" class="prompt-label">Dispatch Directive to the Boardroom</label>
+              <form id="hero-prompt-form" class="prompt-input-row">
+                <input 
+                  type="text" 
+                  id="hero-prompt-input" 
+                  placeholder="e.g. I want to build an AI fitness companion synced with Whoop..." 
+                  autocomplete="off"
+                />
+                <button type="submit" class="btn btn-primary">Assemble Team</button>
+              </form>
+
+              <div class="prompt-quick-tags">
+                <span class="quick-tag-label">Presets:</span>
+                <span class="quick-tag" data-preset="fitness">AI Fitness Co-Pilot</span>
+                <span class="quick-tag" data-preset="b2b">B2B Sales Intelligence</span>
+                <span class="quick-tag" data-preset="dtc">DTC Coffee Subscription</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Line-Drawn Org Chart -->
+          <div class="org-chart-card">
+            <div class="org-chart-header">
+              <h3>Team Coordination Architecture</h3>
+              <span class="org-chart-badge">Fan-Out / Synthesis</span>
+            </div>
+            
+            <div class="org-chart-svg-container">
+              <svg class="org-chart-svg" viewBox="0 0 460 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- CEO Node -->
+                <rect x="155" y="16" width="150" height="42" rx="2" fill="#FFFFFF" stroke="#1B2233" stroke-width="1.5"/>
+                <circle cx="173" cy="37" r="4.5" fill="#1B2233"/>
+                <text x="186" y="35" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#1B2233">CEO AGENT</text>
+                <text x="186" y="47" font-family="Inter, sans-serif" font-size="8.5" fill="#7A869A">Orchestrator & Synthesis</text>
+
+                <!-- Central Branching Lines -->
+                <path d="M230 58 V100" stroke="#CFC5B6" stroke-width="1.5" stroke-dasharray="2 2"/>
+                <path d="M50 100 H410" stroke="#CFC5B6" stroke-width="1.5"/>
+                
+                <!-- Vertical Drops to 6 Agents -->
+                <path d="M50 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M122 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M194 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M266 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M338 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M410 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+
+                <!-- 1. Research Agent (Teal) -->
+                <rect x="16" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="16" y="130" width="68" height="4" fill="#2F6F7E"/>
+                <text x="50" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">RESEARCH</text>
+                <text x="50" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Market &</text>
+                <text x="50" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Competitors</text>
+
+                <!-- 2. Software Engineer Agent (Navy) -->
+                <rect x="88" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="88" y="130" width="68" height="4" fill="#2A4B7C"/>
+                <text x="122" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">ENGINEER</text>
+                <text x="122" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Architecture</text>
+                <text x="122" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">& Code Spec</text>
+
+                <!-- 3. Marketing Agent (Brick) -->
+                <rect x="160" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="160" y="130" width="68" height="4" fill="#8E413C"/>
+                <text x="194" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">MARKETING</text>
+                <text x="194" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Positioning</text>
+                <text x="194" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">& GTM Launch</text>
+
+                <!-- 4. Finance Agent (Olive) -->
+                <rect x="232" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="232" y="130" width="68" height="4" fill="#4E6A3E"/>
+                <text x="266" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">FINANCE</text>
+                <text x="266" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Unit Economics</text>
+                <text x="266" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">& Projections</text>
+
+                <!-- 5. Legal Agent (Plum) -->
+                <rect x="304" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="304" y="130" width="68" height="4" fill="#6E3B68"/>
+                <text x="338" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">LEGAL</text>
+                <text x="338" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Terms & IP</text>
+                <text x="338" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Compliance</text>
+
+                <!-- 6. Designer Agent (Warm Bronze) -->
+                <rect x="376" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="376" y="130" width="68" height="4" fill="#7A6048"/>
+                <text x="410" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">DESIGNER</text>
+                <text x="410" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Brand System</text>
+                <text x="410" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">& UI/UX Spec</text>
+
+                <!-- Convergence Arrow Back to Synthesis -->
+                <path d="M50 198 V240 H410 V198" stroke="#CFC5B6" stroke-width="1.5" stroke-dasharray="2 2"/>
+                <path d="M230 240 V260" stroke="#3E6B8C" stroke-width="1.5"/>
+                <rect x="135" y="260" width="190" height="26" rx="2" fill="#3E6B8C"/>
+                <text x="230" y="277" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle" fill="#FFFFFF">UNIFIED STARTUP CHARTER</text>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Founding Team Directory (Roster Section) -->
+    <section id="roster" class="roster-section">
+      <div class="container">
+        
+        <div class="section-header-row">
+          <div>
+            <div class="section-meta">Executive Roster</div>
+            <h2>The Founding Team Directory</h2>
+          </div>
+          <p style="max-width: 440px; font-size: 0.95rem;">
+            Not single generic chatbots. Each agent operates with specialized domain heuristics, dedicated context pipelines, and defined company charter responsibilities.
+          </p>
+        </div>
+
+        <div class="roster-directory">
+          
+          <div class="roster-entry" data-agent="ceo">
+            <div class="roster-role-col">
+              <div class="roster-role-title">CEO Agent</div>
+              <div class="roster-role-subtitle">role_id: ceo_executive</div>
+            </div>
+            <div class="roster-desc-col">
+              Interprets the founder's overarching vision, orchestrates parallel execution, resolves inter-agent cross dependencies, and synthesizes the final startup charter.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Orchestration</span>
+              <span class="roster-tag">Synthesis</span>
+              <span class="roster-tag">Roadmap</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <div class="roster-entry" data-agent="research">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Research Agent</div>
+              <div class="roster-role-subtitle">role_id: intel_analyst</div>
+            </div>
+            <div class="roster-desc-col">
+              Conducts exhaustive competitor benchmarking, TAM/SAM market modeling, customer persona segmentation, and category churn risk analysis.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Competitors</span>
+              <span class="roster-tag">TAM Sizing</span>
+              <span class="roster-tag">Personas</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <div class="roster-entry" data-agent="engineer">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Software Engineer Agent</div>
+              <div class="roster-role-subtitle">role_id: tech_architect</div>
+            </div>
+            <div class="roster-desc-col">
+              Designs scalable cloud infrastructure, defines schema models, specifies API protocols, and outputs production-ready boilerplate code.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Architecture</span>
+              <span class="roster-tag">Data Models</span>
+              <span class="roster-tag">APIs</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <div class="roster-entry" data-agent="marketing">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Marketing Agent</div>
+              <div class="roster-role-subtitle">role_id: gtm_growth</div>
+            </div>
+            <div class="roster-desc-col">
+              Formulates positioning narratives, drafts organic launch sequences, constructs viral referral loops, and maps paid acquisition channels.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Positioning</span>
+              <span class="roster-tag">Launch Strategy</span>
+              <span class="roster-tag">Referrals</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <div class="roster-entry" data-agent="finance">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Finance Agent</div>
+              <div class="roster-role-subtitle">role_id: capital_economics</div>
+            </div>
+            <div class="roster-desc-col">
+              Calculates CAC:LTV unit economics, models subscription tier sensitivity, forecasts runway burn rates, and generates investor-grade tables.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Unit Economics</span>
+              <span class="roster-tag">Pricing Model</span>
+              <span class="roster-tag">Burn Forecast</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <div class="roster-entry" data-agent="legal">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Legal Agent</div>
+              <div class="roster-role-subtitle">role_id: compliance_ip</div>
+            </div>
+            <div class="roster-desc-col">
+              Drafts baseline Terms of Service, Privacy Policies (GDPR/CCPA), intellectual property ring-fencing terms, and statutory liability disclaimers.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">ToS & Privacy</span>
+              <span class="roster-tag">IP Strategy</span>
+              <span class="roster-tag">Regulatory</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <div class="roster-entry" data-agent="designer">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Designer Agent</div>
+              <div class="roster-role-subtitle">role_id: design_systems</div>
+            </div>
+            <div class="roster-desc-col">
+              Establishes brand visual metaphors, color tokens, typography scales, responsive viewport layouts, and interface wireframe principles.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Design Systems</span>
+              <span class="roster-tag">UI/UX</span>
+              <span class="roster-tag">Color Tokens</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Executive Document Mockup Preview -->
+    <section id="charter-preview" class="mockup-section">
+      <div class="container">
+        
+        <div style="text-align: center; margin-bottom: var(--spacing-xl);">
+          <div class="section-meta">Artifact Substance</div>
+          <h2>Sample Output: The Unified Startup Charter</h2>
+          <p>Every deliberation culminates in an actionable, executive-ready charter document.</p>
+        </div>
+
+        <div class="charter-doc-mockup">
+          
+          <div class="charter-header-band">
+            <div>
+              <div style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-steel); text-transform: uppercase;">FounderAI Master Charter #0482</div>
+              <div class="charter-doc-title">PulseAI — Adaptive Biometric Fitness Co-Pilot</div>
+            </div>
+            <div class="charter-doc-meta">
+              STATUS: RATIFIED BY AI EXECUTIVE BOARD<br>
+              REVISION: 1.0.4-PROD
+            </div>
+          </div>
+
+          <div class="charter-grid">
+            
+            <div class="charter-card card-ceo">
+              <h4>1.0 Executive Vision & Strategic Thesis</h4>
+              <p>PulseAI establishes the first hardware-agnostic biometric coaching companion. By bridging Apple Health, Oura, and Garmin sensor data into an on-device local inference engine, it delivers intra-workout exertion autoregulation without hardware lock-in.</p>
+            </div>
+
+            <div class="charter-card card-research">
+              <h4>2.0 Market Validation & Moat</h4>
+              <p>TAM of $14.2B with 2.4M hybrid athletes identified as immediate beachhead. Primary wedge: Zero proprietary hardware barrier (vs Whoop $30/mo + strap) paired with autoregulated rest-pause timing.</p>
+            </div>
+
+            <div class="charter-card card-engineer">
+              <h4>3.0 Architectural Infrastructure</h4>
+              <p>Client-side CoreML peak-detection model with Protobuf-over-gRPC encrypted telemetry sync to TimescaleDB. Zero raw biological storage on unauthenticated servers.</p>
+            </div>
+
+            <div class="charter-card card-finance">
+              <h4>4.0 Unit Economics & Target Model</h4>
+              <p>Target pricing at $19.99/mo ($149/yr). Blended CAC target $48.00 against an estimated 14-month LTV of $279.00 (5.81x ratio). Break-even subscriber volume: 4,200 active users.</p>
+            </div>
+
+          </div>
+
+          <div class="charter-disclaimer-box">
+            <strong>Mandatory Legal & Financial Compliance Notice:</strong> Documents produced by FounderAI provide structured strategic planning frameworks and automated drafting assistance. They do not constitute formal legal counsel, tax advice, or certified securities filings.
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="workflow" class="workflow-section">
+      <div class="container">
+        
+        <div class="section-meta">Operational Framework</div>
+        <h2>How the Executive Board Operates</h2>
+
+        <div class="workflow-steps">
+          
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <h3 class="step-title">Brief the CEO Agent</h3>
+            <p class="step-desc">
+              State your startup vision in plain language. The CEO Agent analyzes the mandate, establishes core constraints, and issues parallel work orders to the specialist team.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <h3 class="step-title">Parallel Specialist Execution</h3>
+            <p class="step-desc">
+              Research, Engineering, Marketing, Finance, Legal, and Design agents simultaneously deliberate and construct their respective domain deliverables with real-time dependency checks.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <h3 class="step-title">Unified Charter Synthesis</h3>
+            <p class="step-desc">
+              The CEO Agent harmonizes all domain outputs into a unified, actionable Startup Charter with complete financial models, system architectures, and go-to-market plans.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="brand-logo">
+            <span class="brand-mark">F</span>
+            <span>FounderAI</span>
+          </div>
+          <div class="footer-note">
+            © 2026 FounderAI Systems. Executive Multi-Agent Architecture.
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- =========================================================================
+       VIEW 2: LOGIN MOCKUP VIEW
+       ========================================================================= -->
+  <main id="view-login" class="view-container">
+    <div class="login-view">
+      <div class="login-card">
+        
+        <div class="login-header">
+          <div class="brand-mark" style="margin: 0 auto 12px; width: 36px; height: 36px; font-size: 1.1rem;">F</div>
+          <h2>Executive Authentication</h2>
+          <p>Access your organization's persistent boardroom</p>
+        </div>
+
+        <div id="login-directive-banner" class="login-directive-banner">
+          <strong>Directive Queued</strong>
+          <span id="login-directive-text"></span>
+        </div>
+
+        <form id="mock-login-form">
+          <div class="form-group">
+            <label for="login-email">Founder Email</label>
+            <input type="email" id="login-email" value="founder@pulseai.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="login-password">Access Passcode</label>
+            <input type="password" id="login-password" value="••••••••••••" required>
+          </div>
+
+          <div class="login-actions">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Authorize & Enter Boardroom</button>
+            <button type="button" class="btn btn-secondary" style="width: 100%;" data-view-target="landing">Return to Charter</button>
+          </div>
+        </form>
+
+        <div class="login-demo-bypass">
+          <div class="bypass-text">Prototype Mode Active (No Authentication Required)</div>
+          <button id="btn-login-bypass" type="button" class="btn btn-sm btn-secondary" style="font-size: 0.75rem;">Instant Bypass &rarr; Boardroom</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       VIEW 3: INTERACTIVE BOARDROOM VIEW (ENHANCED)
+       ========================================================================= -->
+  <main id="view-boardroom" class="view-container">
+    <div class="boardroom-view">
+      <div class="boardroom-layout">
+        
+        <!-- Left Column: Agent Directory & Status Tracker -->
+        <aside class="boardroom-sidebar">
+          <div class="sidebar-header">
+            <h3>Active Board Roster</h3>
+            <span class="status-badge" style="font-size: 0.75rem;"><span class="status-dot active"></span> Live</span>
+          </div>
+
+          <div id="sidebar-filter-badge" class="sidebar-filter-indicator">
+            <span id="sidebar-filter-text">Filter: All Agents</span>
+            <span id="sidebar-clear-filter" style="cursor: pointer; font-weight: 700;">✕</span>
+          </div>
+
+          <ul class="sidebar-roster-list">
+            
+            <li class="sidebar-agent-item" data-agent="ceo" title="Click to filter feed or direct-query CEO">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">CEO Agent</span>
+                <span class="sidebar-agent-role">Orchestration & Synthesis</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="research" title="Click to filter feed or direct-query Research">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Research Agent</span>
+                <span class="sidebar-agent-role">Market Intelligence</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="engineer" title="Click to filter feed or direct-query Engineer">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Software Engineer</span>
+                <span class="sidebar-agent-role">Architecture & Stack</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="marketing" title="Click to filter feed or direct-query Marketing">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Marketing Agent</span>
+                <span class="sidebar-agent-role">Positioning & GTM</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="finance" title="Click to filter feed or direct-query Finance">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Finance Agent</span>
+                <span class="sidebar-agent-role">Economics & Projections</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="legal" title="Click to filter feed or direct-query Legal">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Legal Agent</span>
+                <span class="sidebar-agent-role">Compliance & IP</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="designer" title="Click to filter feed or direct-query Designer">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Designer Agent</span>
+                <span class="sidebar-agent-role">UI/UX & Brand System</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+          </ul>
+
+          <div class="sidebar-footer">
+            <button id="btn-reset-boardroom" class="btn btn-secondary btn-sm" style="width: 100%;">Clear & Reset Feed</button>
+          </div>
+        </aside>
+
+        <!-- Center Column: Chronological Meeting Feed -->
+        <section class="boardroom-main">
+          
+          <div class="boardroom-topbar">
+            <div class="topbar-topic">
+              <span class="topic-label">Deliberation:</span>
+              <span id="boardroom-topic-title" class="topic-title">PulseAI: Adaptive Biometric Fitness & Nutrition Co-Pilot</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="org-chart-badge" style="font-size: 0.72rem; color: var(--accent-steel);">Founder in Command</span>
+              <button id="btn-export-charter" class="btn btn-primary btn-sm">Export Master Charter</button>
+            </div>
+          </div>
+
+          <!-- Deliberation Phase Progress Tracker -->
+          <div class="deliberation-progress-bar">
+            <div class="stage-step active" id="stage-1"><span class="stage-bullet"></span> 1. Directive & Brief</div>
+            <div class="stage-arrow">→</div>
+            <div class="stage-step" id="stage-2"><span class="stage-bullet"></span> 2. Parallel Specialization</div>
+            <div class="stage-arrow">→</div>
+            <div class="stage-step" id="stage-3"><span class="stage-bullet"></span> 3. Risk & Compliance</div>
+            <div class="stage-arrow">→</div>
+            <div class="stage-step" id="stage-4"><span class="stage-bullet"></span> 4. Charter Synthesis</div>
+          </div>
+
+          <div id="boardroom-feed" class="feed-container">
+            <!-- Dynamically populated via addMessage() -->
+          </div>
+
+          <div class="boardroom-input-container">
+            <form id="boardroom-form" class="input-box-wrapper">
+              <input 
+                type="text" 
+                id="boardroom-input" 
+                class="boardroom-input" 
+                placeholder="Issue a new directive to the team (e.g. adjust pricing tier or change tech stack)..." 
+                autocomplete="off"
+              />
+              <button type="submit" class="btn btn-primary">Dispatch</button>
+            </form>
+          </div>
+
+        </section>
+
+        <!-- Right Column: Live Compiled Charter Synthesis Panel -->
+        <aside class="boardroom-charter-panel">
+          <div class="panel-header">
+            <h3>Live Startup Charter</h3>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-steel);">v1.0-draft</span>
+          </div>
+
+          <div class="charter-live-content">
+            
+            <div class="charter-section-block" data-section="vision" data-agent="ceo" data-default="Awaiting CEO executive synthesis...">
+              <h4>1.0 Executive Thesis</h4>
+              <p>Awaiting CEO executive synthesis...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="market" data-agent="research" data-default="Market intelligence pending...">
+              <h4>2.0 Market & TAM</h4>
+              <p>Market intelligence pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="architecture" data-agent="engineer" data-default="System architecture pending...">
+              <h4>3.0 System Architecture</h4>
+              <p>System architecture pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="gtm" data-agent="marketing" data-default="GTM strategy pending...">
+              <h4>4.0 GTM & Growth</h4>
+              <p>GTM strategy pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="economics" data-agent="finance" data-default="Unit economics pending...">
+              <h4>5.0 Unit Economics</h4>
+              <p>Unit economics pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="compliance" data-agent="legal" data-default="Compliance framework pending...">
+              <h4>6.0 Regulatory & Legal</h4>
+              <p>Compliance framework pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="design" data-agent="designer" data-default="Design tokens pending...">
+              <h4>7.0 Design System</h4>
+              <p>Design tokens pending...</p>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       VIEW 4: FOUNDER PROFILE VIEW
+       ========================================================================= -->
+  <main id="view-profile" class="view-container">
+    <div class="profile-view">
+      <div class="container">
+        
+        <!-- Profile Header -->
+        <div class="profile-header-card">
+          <div class="profile-avatar-row">
+            <div class="profile-avatar-large">TK</div>
+            <div>
+              <div class="profile-name">Taarun K</div>
+              <div class="profile-meta-line">Chairman & Principal Founder • FounderAI Suite v1.0.4</div>
+              <div class="profile-meta-line" style="font-family: var(--font-mono); font-size: 0.78rem; margin-top: 4px;">founder@pulseai.com • ID: fdr_99214</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" data-view-target="boardroom">Enter Boardroom</button>
+            <button id="btn-profile-signout" class="btn btn-secondary btn-sm">Sign Out</button>
+          </div>
+        </div>
+
+        <div class="profile-sections-grid">
+          
+          <!-- Column 1: Active Charters & History -->
+          <div>
+            
+            <div class="profile-card">
+              <h3>
+                <span>Active Startup Charters</span>
+                <span class="org-chart-badge" style="font-size: 0.72rem;">3 Ventures</span>
+              </h3>
+              
+              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('fitness')">
+                <div class="charter-history-info">
+                  <h4>PulseAI — Biometric Fitness Co-Pilot</h4>
+                  <div class="charter-history-meta">Status: Ratified by Executive Board • 7 Deliverables</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
+              </div>
+
+              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('b2b')">
+                <div class="charter-history-info">
+                  <h4>LeadForge — Autonomous B2B Sales Agent</h4>
+                  <div class="charter-history-meta">Status: In Deliberation • 4 Deliverables</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
+              </div>
+
+              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('dtc')">
+                <div class="charter-history-info">
+                  <h4>RoastClub — Algorithmic Coffee Subscription</h4>
+                  <div class="charter-history-meta">Status: Draft Phase • Market Sizing Complete</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
+              </div>
+            </div>
+
+            <div class="profile-card">
+              <h3><span>Executive Governance & Heuristics</span></h3>
+              <p style="font-size: 0.88rem; color: var(--ink-secondary); margin-bottom: 12px;">
+                Global heuristic rules injected into every specialist agent's context during deliberation cycles.
+              </p>
+              <div style="background-color: var(--bg-paper); border: 1px solid var(--border-hairline); padding: 12px; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5;">
+                • Target CAC Payback: &lt; 6 months<br>
+                • Minimum Gross Margin Threshold: 75%<br>
+                • Regulatory Shield: Automatic FDA 21 CFR § 860 & GDPR Art 9 safe-harbors<br>
+                • System Philosophy: Local-first inference before cloud synchronization
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2: Agent Roster Health & System Engine -->
+          <div>
+            
+            <div class="profile-card">
+              <h3><span>AI Roster Health</span> <span class="status-badge" style="font-size: 0.75rem;"><span class="status-dot active"></span> 7/7 Operational</span></h3>
+              
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">CEO Agent</span>
+                <span class="agent-pref-status">● Online (Synthesis Ready)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Research Agent</span>
+                <span class="agent-pref-status">● Online (Market Intel)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Software Engineer</span>
+                <span class="agent-pref-status">● Online (Architecture)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Marketing Agent</span>
+                <span class="agent-pref-status">● Online (GTM Strategy)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Finance Agent</span>
+                <span class="agent-pref-status">● Online (Unit Economics)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Legal Agent</span>
+                <span class="agent-pref-status">● Online (Compliance)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Designer Agent</span>
+                <span class="agent-pref-status">● Online (Design Tokens)</span>
+              </div>
+            </div>
+
+            <div class="profile-card">
+              <h3><span>Intelligence Engine</span></h3>
+              <div style="font-size: 0.85rem; color: var(--ink-secondary); line-height: 1.55;">
+                <div style="margin-bottom: 6px;"><strong>Core Engine:</strong> Google Gemini 2.0 Flash</div>
+                <div style="margin-bottom: 6px;"><strong>Execution Mode:</strong> Parallel Fan-Out / Synthesis</div>
+                <div style="margin-bottom: 6px;"><strong>Encryption:</strong> AES-256 Client-Controlled Keys</div>
+                <div><strong>Jurisdiction:</strong> US Delaware C-Corp / EU Cross-Border</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+// Agent Meta Registry
+const AGENT_REGISTRY = {
+  ceo: { name: 'CEO Agent', role: 'Orchestration & Executive Synthesis', tag: 'Executive' },
+  research: { name: 'Research Agent', role: 'Market, Trend & Competitor Intelligence', tag: 'Intelligence' },
+  engineer: { name: 'Software Engineer Agent', role: 'System Architecture & Technical Stack', tag: 'Architecture' },
+  marketing: { name: 'Marketing Agent', role: 'Positioning, Brand & GTM Launch Strategy', tag: 'Growth' },
+  finance: { name: 'Finance Agent', role: 'Unit Economics, Pricing & Financial Model', tag: 'Capital' },
+  legal: { name: 'Legal Agent', role: 'Compliance, IP Framework & Terms of Service', tag: 'Compliance' },
+  designer: { name: 'Designer Agent', role: 'Brand Identity & User Experience Direction', tag: 'Design System' }
+};
+
+// Application State
+const state = {
+  currentView: 'landing',
+  isSimulating: false,
+  simulationTimer: null,
+  activeTopic: '',
+  activeFilter: null,
+  currentPhase: 1,
+  agentStatuses: { ceo: 'idle', research: 'idle', engineer: 'idle', marketing: 'idle', finance: 'idle', legal: 'idle', designer: 'idle' },
+  charterData: { vision: '', market: '', architecture: '', gtm: '', economics: '', compliance: '', design: '' }
+};
+
+// Presets
+const PRESETS = {
+  fitness: {
+    topic: 'PulseAI: Adaptive Biometric Fitness & Nutrition Co-Pilot',
+    prompt: 'I want to build an AI fitness companion that syncs with Apple Watch & Whoop to create real-time dynamic workout and meal adjustments.',
+    steps: [
+      {
+        agent: 'ceo',
+        phase: 1,
+        time: '00:01',
+        title: 'Executive Charter & Delegation Brief',
+        reasoning: 'Synthesizing founder directive: High-growth biometric market, zero-hardware barrier, needs strict medical disclaimer and high LTV/CAC retention moat.',
+        content: `
+          <p><strong>Executive Directive:</strong> We are launching <em>PulseAI</em> — a hyper-personalized, biometric-driven health companion targeting premium performance athletes and busy professionals.</p>
+          <p><strong>Operational Mandates:</strong></p>
+          <ul>
+            <li><strong>Research:</strong> Map competitive landscape against Whoop Coach, Apple Fitness+, and Freeletics.</li>
+            <li><strong>Engineering:</strong> Outline real-time health data ingestion engine (HealthKit / Google Health Connect) with local-first inference.</li>
+            <li><strong>Marketing:</strong> Build high-converting B2C waitlist strategy and micro-influencer fitness creator affiliate loop.</li>
+            <li><strong>Finance:</strong> Model $19.99/mo subscription tier vs $149/yr annual pass with CAC payback targets &lt; 4 months.</li>
+            <li><strong>Legal:</strong> Draft HIPAA/GDPR health telemetry storage boundaries and clear "Not Medical Advice" liability shield.</li>
+            <li><strong>Designer:</strong> Specify high-contrast, glanceable telemetry dashboard with minimal cognitive load during workouts.</li>
+          </ul>
+        `
+      },
+      {
+        agent: 'research',
+        phase: 2,
+        time: '00:03',
+        title: 'Market Intelligence & Competitive Landscape',
+        reasoning: 'Audited 18 direct/indirect competitors. Key moat identified: Consumers resent $30/mo proprietary bands (Whoop); open API biometric integration solves adoption friction.',
+        content: `
+          <p>Completed competitive benchmarking across 18 fitness intelligence apps:</p>
+          <table>
+            <thead>
+              <tr><th>Competitor</th><th>Price Point</th><th>Core Weakness</th><th>PulseAI Advantage</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Whoop Coach</td><td>$30/mo</td><td>Requires $200+ proprietary band</td><td>Hardware-agnostic (Apple, Garmin, Oura)</td></tr>
+              <tr><td>Freeletics</td><td>$12/mo</td><td>Static algorithmic plans</td><td>Intra-workout exertion autoregulation</td></tr>
+              <tr><td>Fitbod</td><td>$15/mo</td><td>Lacks recovery context</td><td>Unified sleep, strain, & nutrition engine</td></tr>
+            </tbody>
+          </table>
+          <p><strong>Target Beachhead:</strong> 2.4M hybrid athletes seeking unified intelligent coaching without hardware lock-in.</p>
+        `,
+        charterKey: 'market',
+        charterSnippet: 'TAM: $14.2B global fitness software. Target beachhead: 2.4M hybrid athletes seeking unified recovery & real-time strain adjustment.'
+      },
+      {
+        agent: 'engineer',
+        phase: 2,
+        time: '00:06',
+        title: 'System Architecture & Data Pipeline',
+        reasoning: 'Engineered sub-10ms latency loop. Raw high-frequency accelerometer streams processed on-device (CoreML); only aggregated telemetry frames sync to backend.',
+        content: `
+          <p><strong>Recommended Core Architecture:</strong></p>
+          <pre><code>[Sensor Feed] ──(BLE)──> [Mobile Client] ──(gRPC Encrypted)──> [TimescaleDB] ──> [PyTorch Serving Engine]</code></pre>
+          <p><strong>Key Technical Decisions:</strong></p>
+          <ul>
+            <li><strong>Local Sensor Processing:</strong> Accelerometer & gyroscope peak-detection executed on-device using CoreML for sub-10ms latency.</li>
+            <li><strong>Privacy-Preserving Telemetry:</strong> Biometric payload frames encrypted with user-controlled AES-256 private keys.</li>
+          </ul>
+        `,
+        charterKey: 'architecture',
+        charterSnippet: 'Event-driven time-series pipeline (FastAPI + TimescaleDB) coupled with CoreML on-device inference for real-time zero-latency feedback.'
+      },
+      {
+        agent: 'designer',
+        phase: 2,
+        time: '00:09',
+        title: 'Design System & Interaction Blueprint',
+        reasoning: 'User ergonomics in high-strain environments: Heart rate >160bpm impairs fine motor control. Mandated large tap targets (minimum 48x48pt) and high-contrast dark telemetry.',
+        content: `
+          <p><strong>Visual Metaphor:</strong> "Cockpit Instrumentation for Human Biology."</p>
+          <ul>
+            <li><strong>Palette:</strong> Deep Slate Canvas (<code>#0D1117</code>), High-Contrast Mint (<code>#00E599</code>), Crisp Milk (<code>#F0F6FC</code>).</li>
+            <li><strong>Typography:</strong> <em>JetBrains Mono</em> for numerical metrics; <em>Inter</em> for contextual coaching insights.</li>
+            <li><strong>One-Thumb Reach:</strong> Primary controls located in bottom 35% of the viewport.</li>
+          </ul>
+        `,
+        charterKey: 'design',
+        charterSnippet: 'Glanceable dark telemetry interface with high-contrast biological telemetry metrics and one-thumb reachable controls.'
+      },
+      {
+        agent: 'marketing',
+        phase: 2,
+        time: '00:12',
+        title: 'Go-To-Market & Growth Architecture',
+        reasoning: 'Organic distribution engine modeled around Strava / Instagram workout shareability with viral squad leaderboard mechanics.',
+        content: `
+          <p><strong>Phase 1: Founder-Led Beachhead</strong></p>
+          <ul>
+            <li><strong>Strava Auto-Retrospectives:</strong> Auto-generated workout summary infographics shareable with 1-tap to Instagram Stories & Strava feed.</li>
+            <li><strong>Creator Co-Op:</strong> 50 mid-tier CrossFit & hybrid running coaches granted lifetime access for weekly breakdown features.</li>
+            <li><strong>Squad Waitlist Mechanics:</strong> Move up 50 positions per workout buddy onboarded.</li>
+          </ul>
+        `,
+        charterKey: 'gtm',
+        charterSnippet: 'GTM Strategy: Strava auto-retrospective sharing loops, 50-coach creator seeding program, and tiered private squad waitlist mechanics.'
+      },
+      {
+        agent: 'finance',
+        phase: 3,
+        time: '00:15',
+        title: 'Unit Economics & Financial Projections',
+        reasoning: 'Benchmarked against SaaS fitness benchmarks (Strava, WHOOP, Peloton). Target LTV:CAC of 5.81x with 14-month retention baseline.',
+        content: `
+          <p><strong>Core Unit Economics Model:</strong></p>
+          <table>
+            <thead>
+              <tr><th>Metric</th><th>Conservative</th><th>Target</th><th>Aggressive</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Monthly ARPU</td><td>$14.99</td><td>$19.99</td><td>$24.99</td></tr>
+              <tr><td>CAC</td><td>$62.00</td><td>$48.00</td><td>$35.00</td></tr>
+              <tr><td>Estimated LTV</td><td>$209.00</td><td>$279.00</td><td>$349.00</td></tr>
+              <tr><td>LTV : CAC</td><td>3.37x</td><td>5.81x</td><td>9.97x</td></tr>
+            </tbody>
+          </table>
+          <p><strong>12-Month Break-Even Target:</strong> 4,200 active paying subscribers.</p>
+        `,
+        disclaimer: 'Financial estimates and unit economics projections are generated for strategic planning purposes only and do not constitute certified financial or investment advice.',
+        charterKey: 'economics',
+        charterSnippet: 'Target ARPU: $19.99/mo | Estimated LTV: $279 | LTV:CAC 5.8x | Break-even requirement: 4,200 active paid subscribers.'
+      },
+      {
+        agent: 'legal',
+        phase: 3,
+        time: '00:18',
+        title: 'Regulatory, Privacy & IP Safeguards',
+        reasoning: 'Constructed multi-jurisdiction risk buffer: FDA 21 CFR § 860 wellness boundaries, HIPAA safe-harbor, and GDPR Article 9 explicit biometric consent protocol.',
+        content: `
+          <p><strong>Key Compliance Frameworks:</strong></p>
+          <ul>
+            <li><strong>FDA Wellness Exemption:</strong> Clear statutory barrier categorizing PulseAI as a wellness tool rather than an FDA-regulated medical device (21 CFR § 860).</li>
+            <li><strong>GDPR Article 9 Biometric Consent:</strong> Explicit, affirmative consent protocol with 1-click permanent data erasure capability.</li>
+            <li><strong>Algorithmic IP Isolation:</strong> Proprietary dynamic autoregulation weights hosted server-side.</li>
+          </ul>
+        `,
+        disclaimer: 'Legal agent outputs provide generalized informational frameworks only and do not constitute formal legal counsel. Always engage qualified legal counsel for jurisdiction-specific compliance.',
+        charterKey: 'compliance',
+        charterSnippet: 'FDA wellness exemption positioning (21 CFR § 860), GDPR Article 9 explicit biometric consent protocol, and server-side IP isolation.'
+      },
+      {
+        agent: 'ceo',
+        phase: 4,
+        time: '00:21',
+        title: 'Final Synthesis & Executive Approval',
+        reasoning: 'Synthesizing all 6 specialist outputs into FounderAI Master Startup Charter #0482. Ratified for immediate execution.',
+        content: `
+          <p><strong>Executive Summary & Synthesis:</strong> All operational directives have been delivered and verified across research, engineering, design, marketing, finance, and compliance.</p>
+          <p>The <strong>PulseAI Master Startup Charter</strong> is now compiled and ready for founder execution. Review the completed summary in the right-hand panel.</p>
+        `,
+        charterKey: 'vision',
+        charterSnippet: 'PulseAI is positioned as the definitive hardware-agnostic biometric co-pilot with unit economics targeting 5.8x LTV:CAC and clean regulatory shielding.'
+      }
+    ]
+  },
+  b2b: {
+    topic: 'LeadForge: Autonomous B2B Pipeline Intelligence Agent',
+    prompt: 'I want to build an autonomous agent that enriches inbound sales leads and crafts hyper-personalized multi-channel outreach sequences.'
+  },
+  dtc: {
+    topic: 'RoastClub: Algorithmically Tuned Micro-Lot Coffee Subscription',
+    prompt: 'I want to launch a specialty coffee subscription that calibrates roast profiles to user brewing methods and flavor surveys.'
+  }
+};
+
+const views = {
+  landing: document.getElementById('view-landing'),
+  login: document.getElementById('view-login'),
+  boardroom: document.getElementById('view-boardroom'),
+  profile: document.getElementById('view-profile')
+};
+
+function updateHeaderAuthState() {
+  const guestHeader = document.getElementById('header-actions-guest');
+  const authHeader = document.getElementById('header-actions-auth');
+  const boardroomBtn = document.getElementById('btn-header-boardroom');
+
+  if (state.isAuthenticated) {
+    if (guestHeader) guestHeader.style.display = 'none';
+    if (authHeader) authHeader.style.display = 'flex';
+    if (boardroomBtn) {
+      boardroomBtn.style.display = state.currentView === 'boardroom' ? 'none' : 'inline-flex';
+    }
+  } else {
+    if (guestHeader) guestHeader.style.display = 'flex';
+    if (authHeader) authHeader.style.display = 'none';
+  }
+}
+
+function switchView(viewName) {
+  state.currentView = viewName;
+  if (viewName === 'boardroom' || viewName === 'profile') {
+    state.isAuthenticated = true;
+  }
+  Object.keys(views).forEach(key => {
+    if (views[key]) views[key].classList.toggle('active', key === viewName);
+  });
+  updateHeaderAuthState();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function signOut() {
+  state.isAuthenticated = false;
+  state.pendingPrompt = '';
+  resetBoardroom();
+  switchView('landing');
+}
+
+window.loadPresetFromProfile = function(presetKey) {
+  const preset = PRESETS[presetKey];
+  if (preset) {
+    switchView('boardroom');
+    runSimulation(preset.prompt, presetKey);
+  }
+};
+
+function setStage(stageNumber) {
+  state.currentPhase = stageNumber;
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`stage-${i}`);
+    if (!el) continue;
+    if (i < stageNumber) {
+      el.className = 'stage-step completed';
+    } else if (i === stageNumber) {
+      el.className = 'stage-step active';
+    } else {
+      el.className = 'stage-step';
+    }
+  }
+}
+
+function setStatus(agentId, status) {
+  if (!AGENT_REGISTRY[agentId]) return;
+  state.agentStatuses[agentId] = status;
+
+  const item = document.querySelector(`.sidebar-agent-item[data-agent="${agentId}"]`);
+  if (item) {
+    const dot = item.querySelector('.status-dot');
+    const label = item.querySelector('.sidebar-status-text');
+    if (dot) dot.className = `status-dot ${status}`;
+    if (label) label.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  const rosterEntry = document.querySelector(`.roster-entry[data-agent="${agentId}"]`);
+  if (rosterEntry) {
+    const rDot = rosterEntry.querySelector('.status-dot');
+    const rLabel = rosterEntry.querySelector('.status-text');
+    if (rDot) rDot.className = `status-dot ${status}`;
+    if (rLabel) rLabel.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  }
+}
+
+function filterFeed(agentId) {
+  state.activeFilter = agentId;
+  const feed = document.getElementById('boardroom-feed');
+  const filterBadge = document.getElementById('sidebar-filter-badge');
+  const filterText = document.getElementById('sidebar-filter-text');
+
+  document.querySelectorAll('.sidebar-agent-item').forEach(item => {
+    item.classList.toggle('selected', item.getAttribute('data-agent') === agentId);
+  });
+
+  if (agentId) {
+    const agent = AGENT_REGISTRY[agentId];
+    if (filterBadge) filterBadge.classList.add('active');
+    if (filterText) filterText.textContent = `Showing: ${agent ? agent.name : agentId}`;
+    
+    if (feed) {
+      feed.querySelectorAll('.meeting-note').forEach(note => {
+        const noteAgent = note.getAttribute('data-agent');
+        note.style.display = (noteAgent === agentId || noteAgent === 'user') ? 'block' : 'none';
+      });
+    }
+  } else {
+    if (filterBadge) filterBadge.classList.remove('active');
+    if (feed) {
+      feed.querySelectorAll('.meeting-note').forEach(note => {
+        note.style.display = 'block';
+      });
+    }
+  }
+}
+
+function addMessage(agentId, title, content, meta = {}) {
+  const feed = document.getElementById('boardroom-feed');
+  if (!feed) return;
+
+  const agent = AGENT_REGISTRY[agentId] || {
+    name: agentId === 'user' ? 'Founder' : 'System',
+    role: agentId === 'user' ? 'Product Visionary' : 'Orchestration',
+    tag: agentId === 'user' ? 'Founder' : 'Notice'
+  };
+
+  const timeStr = meta.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  const noteDiv = document.createElement('div');
+  noteDiv.className = 'meeting-note';
+  noteDiv.setAttribute('data-agent', agentId);
+
+  let disclaimerHtml = '';
+  if (meta.disclaimer) {
+    disclaimerHtml = `
+      <div class="disclaimer-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span><strong>Regulatory Disclaimer:</strong> ${meta.disclaimer}</span>
+      </div>
+    `;
+  }
+
+  let reasoningHtml = '';
+  if (meta.reasoning) {
+    reasoningHtml = `
+      <div class="agent-reasoning-toggle" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span>🧠 Agent Reasoning / Heuristic Chain ▸</span>
+      </div>
+      <div class="agent-reasoning-content">
+        ${meta.reasoning}
+      </div>
+    `;
+  }
+
+  let actionsHtml = '';
+  if (agentId !== 'user') {
+    actionsHtml = `
+      <div class="note-actions-bar">
+        <button class="note-action-btn" onclick="directQueryAgent('${agentId}')">💬 Direct Follow-up</button>
+        <button class="note-action-btn" onclick="copyNoteContent(this)">📋 Copy Section</button>
+      </div>
+    `;
+  }
+
+  noteDiv.innerHTML = `
+    <div class="note-header">
+      <div class="note-agent-meta">
+        <span class="note-agent-badge">${agent.name}</span>
+        <span class="roster-role-subtitle">${agent.role}</span>
+      </div>
+      <div class="note-time">${timeStr}</div>
+    </div>
+    <div class="note-body">
+      ${reasoningHtml}
+      ${title ? `<h4 style="margin-bottom: 8px; font-family: var(--font-serif);">${title}</h4>` : ''}
+      ${content}
+      ${disclaimerHtml}
+      ${actionsHtml}
+    </div>
+  `;
+
+  feed.appendChild(noteDiv);
+  if (state.activeFilter && state.activeFilter !== agentId && agentId !== 'user') {
+    noteDiv.style.display = 'none';
+  }
+  feed.scrollTop = feed.scrollHeight;
+}
+
+window.directQueryAgent = function(agentId) {
+  const input = document.getElementById('boardroom-input');
+  const agent = AGENT_REGISTRY[agentId];
+  if (input && agent) {
+    input.value = `@${agent.name}: `;
+    input.focus();
+  }
+};
+
+window.copyNoteContent = function(btn) {
+  const noteBody = btn.closest('.note-body');
+  if (noteBody) {
+    navigator.clipboard.writeText(noteBody.innerText);
+    const orig = btn.innerText;
+    btn.innerText = '✓ Copied!';
+    setTimeout(() => { btn.innerText = orig; }, 1500);
+  }
+};
+
+function updateCharterSnippet(key, text) {
+  if (!key || !text) return;
+  state.charterData[key] = text;
+  const block = document.querySelector(`.charter-section-block[data-section="${key}"]`);
+  if (block) {
+    block.classList.add('filled');
+    const p = block.querySelector('p');
+    if (p) p.textContent = text;
+  }
+}
+
+function resetBoardroom() {
+  if (state.simulationTimer) {
+    clearTimeout(state.simulationTimer);
+    state.simulationTimer = null;
+  }
+  state.isSimulating = false;
+  filterFeed(null);
+  setStage(1);
+
+  const feed = document.getElementById('boardroom-feed');
+  if (feed) feed.innerHTML = '';
+
+  Object.keys(AGENT_REGISTRY).forEach(agentId => {
+    setStatus(agentId, 'idle');
+  });
+
+  document.querySelectorAll('.charter-section-block').forEach(block => {
+    block.classList.remove('filled');
+    const defaultText = block.getAttribute('data-default') || 'Pending deliberation...';
+    const p = block.querySelector('p');
+    if (p) p.textContent = defaultText;
+  });
+}
+
+function runSimulation(promptText, presetKey = 'fitness') {
+  resetBoardroom();
+  state.isSimulating = true;
+  switchView('boardroom');
+
+  const preset = PRESETS[presetKey] || PRESETS.fitness;
+  const topicTitle = document.getElementById('boardroom-topic-title');
+  if (topicTitle) topicTitle.textContent = preset.topic;
+
+  addMessage('user', 'Founding Directive', `<p>${promptText || preset.prompt}</p>`, { time: '00:00' });
+  setStage(1);
+  setStatus('ceo', 'active');
+
+  const steps = preset.steps || PRESETS.fitness.steps;
+  let currentStepIdx = 0;
+
+  function executeNextStep() {
+    if (currentStepIdx >= steps.length) {
+      state.isSimulating = false;
+      return;
+    }
+
+    const step = steps[currentStepIdx];
+    if (step.phase) setStage(step.phase);
+
+    if (currentStepIdx > 0) {
+      const prevStep = steps[currentStepIdx - 1];
+      if (prevStep.agent !== step.agent) {
+        setStatus(prevStep.agent, 'done');
+      }
+    }
+
+    setStatus(step.agent, 'active');
+    addMessage(step.agent, step.title, step.content, {
+      time: step.time,
+      disclaimer: step.disclaimer,
+      reasoning: step.reasoning
+    });
+
+    if (step.charterKey && step.charterSnippet) {
+      updateCharterSnippet(step.charterKey, step.charterSnippet);
+    }
+
+    currentStepIdx++;
+    if (currentStepIdx < steps.length) {
+      state.simulationTimer = setTimeout(executeNextStep, 1400);
+    } else {
+      setTimeout(() => {
+        setStatus(step.agent, 'done');
+        setStage(4);
+        state.isSimulating = false;
+      }, 800);
+    }
+  }
+
+  state.simulationTimer = setTimeout(executeNextStep, 800);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-view-target]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchView(el.getAttribute('data-view-target'));
+    });
+  });
+
+  document.querySelectorAll('.demo-view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchView(btn.getAttribute('data-view'));
+    });
+  });
+
+  const heroForm = document.getElementById('hero-prompt-form');
+  const heroInput = document.getElementById('hero-prompt-input');
+  const loginBanner = document.getElementById('login-directive-banner');
+  const loginDirectiveText = document.getElementById('login-directive-text');
+
+  function queueDirectiveAndGoToLogin(promptText, presetKey = 'fitness') {
+    state.pendingPrompt = promptText;
+    state.pendingPreset = presetKey;
+
+    if (loginBanner && loginDirectiveText) {
+      if (promptText) {
+        loginDirectiveText.textContent = `"${promptText}"`;
+        loginBanner.classList.add('visible');
+      } else {
+        loginBanner.classList.remove('visible');
+      }
+    }
+    switchView('login');
+  }
+
+  if (heroForm && heroInput) {
+    heroForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = heroInput.value.trim() || 'I want to build an AI fitness companion.';
+      queueDirectiveAndGoToLogin(text, 'fitness');
+    });
+  }
+
+  document.querySelectorAll('.quick-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const presetKey = tag.getAttribute('data-preset');
+      const preset = PRESETS[presetKey];
+      if (preset) {
+        if (heroInput) heroInput.value = preset.prompt;
+        queueDirectiveAndGoToLogin(preset.prompt, presetKey);
+      }
+    });
+  });
+
+  function completeAuthAndEnterBoardroom() {
+    switchView('boardroom');
+    if (state.pendingPrompt) {
+      const promptToRun = state.pendingPrompt;
+      const presetToRun = state.pendingPreset || 'fitness';
+      state.pendingPrompt = '';
+      runSimulation(promptToRun, presetToRun);
+    }
+  }
+
+  const loginForm = document.getElementById('mock-login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      completeAuthAndEnterBoardroom();
+    });
+  }
+
+  const loginBypassBtn = document.getElementById('btn-login-bypass');
+  if (loginBypassBtn) {
+    loginBypassBtn.addEventListener('click', () => {
+      completeAuthAndEnterBoardroom();
+    });
+  }
+
+  document.querySelectorAll('[data-view-target="login"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!state.pendingPrompt && loginBanner) {
+        loginBanner.classList.remove('visible');
+      }
+    });
+  });
+
+  const boardroomForm = document.getElementById('boardroom-form');
+  const boardroomInput = document.getElementById('boardroom-input');
+  if (boardroomForm && boardroomInput) {
+    boardroomForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = boardroomInput.value.trim();
+      if (!text) return;
+      boardroomInput.value = '';
+      runSimulation(text, 'fitness');
+    });
+  }
+
+  const resetBtn = document.getElementById('btn-reset-boardroom');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', resetBoardroom);
+  }
+
+  const exportBtn = document.getElementById('btn-export-charter');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      alert('FounderAI Startup Charter exported to markdown file: /PulseAI_Master_Charter.md');
+    });
+  }
+
+  document.querySelectorAll('.sidebar-agent-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const agentId = item.getAttribute('data-agent');
+      if (state.activeFilter === agentId) {
+        filterFeed(null);
+      } else {
+        filterFeed(agentId);
+      }
+    });
+  });
+
+  const clearFilterBtn = document.getElementById('sidebar-clear-filter');
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener('click', () => {
+      filterFeed(null);
+    });
+  }
+
+  document.querySelectorAll('.charter-section-block').forEach(block => {
+    block.addEventListener('click', () => {
+      const agentId = block.getAttribute('data-agent');
+      if (!agentId) return;
+      const note = document.querySelector(`.meeting-note[data-agent="${agentId}"]`);
+      if (note) {
+        note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        note.classList.add('highlight-pulse');
+        setTimeout(() => { note.classList.remove('highlight-pulse'); }, 1500);
+      }
+    });
+  });
+
+  const headerSignOutBtn = document.getElementById('btn-header-signout');
+  if (headerSignOutBtn) {
+    headerSignOutBtn.addEventListener('click', () => {
+      signOut();
+    });
+  }
+
+  const profileSignOutBtn = document.getElementById('btn-profile-signout');
+  if (profileSignOutBtn) {
+    profileSignOutBtn.addEventListener('click', () => {
+      signOut();
+    });
+  }
+
+  switchView('landing');
+});
+
+window.FounderAI = { state, switchView, addMessage, setStatus, setStage, filterFeed, runSimulation, resetBoardroom, updateCharterSnippet };
+window.FoundrAI = window.FounderAI;
+  </script>
+</body>
+</html>

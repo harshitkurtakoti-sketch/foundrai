@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FounderAI — Coordinated AI Executive Founding Team</title>
+  <meta name="description" content="Replace the executive team a founder hires with a coordinated multi-agent AI squad: CEO, Research, Engineering, Marketing, Finance, Legal, and Design.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Site Navigation Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="#" class="brand-logo" data-view-target="landing">
+        <span class="brand-mark">F</span>
+        <span>FounderAI</span>
+      </a>
+
+      <!-- Dynamic Header Actions based on Auth State -->
+      <div id="header-actions-guest" class="header-actions">
+        <button class="btn btn-secondary btn-sm" data-view-target="login">Sign In</button>
+        <button class="btn btn-primary btn-sm" data-view-target="login">Enter Boardroom</button>
+      </div>
+
+      <div id="header-actions-auth" class="header-actions" style="display: none;">
+        <button class="btn btn-secondary btn-sm" data-view-target="profile">
+          <span>👤</span> <span>Taarun K (Founder)</span>
+        </button>
+        <button id="btn-header-boardroom" class="btn btn-primary btn-sm" data-view-target="boardroom">Boardroom</button>
+        <button id="btn-header-signout" class="btn btn-secondary btn-sm" style="color: var(--ink-muted);">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       VIEW 1: LANDING PAGE
+       ========================================================================= -->
+  <main id="view-landing" class="view-container active">
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <div class="hero-content">
+            <div class="hero-badge">Autonomous Executive Suite</div>
+            <h1 class="hero-title">Your complete founding team. <em>Coordinated by AI.</em></h1>
+            <p class="hero-lead">
+              FounderAI replaces the multidisciplinary team a founder hires—CEO, developer, marketer, finance lead, designer, and legal advisor—with a coordinated roster of autonomous AI specialists working in parallel.
+            </p>
+
+            <!-- Hero Idea Prompt Box -->
+            <div class="hero-prompt-box">
+              <label for="hero-prompt-input" class="prompt-label">Dispatch Directive to the Boardroom</label>
+              <form id="hero-prompt-form" class="prompt-input-row">
+                <input 
+                  type="text" 
+                  id="hero-prompt-input" 
+                  placeholder="e.g. I want to build an AI fitness companion synced with Whoop..." 
+                  autocomplete="off"
+                />
+                <button type="submit" class="btn btn-primary">Assemble Team</button>
+              </form>
+
+              <div class="prompt-quick-tags">
+                <span class="quick-tag-label">Presets:</span>
+                <span class="quick-tag" data-preset="fitness">AI Fitness Co-Pilot</span>
+                <span class="quick-tag" data-preset="b2b">B2B Sales Intelligence</span>
+                <span class="quick-tag" data-preset="dtc">DTC Coffee Subscription</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Line-Drawn Org Chart -->
+          <div class="org-chart-card">
+            <div class="org-chart-header">
+              <h3>Team Coordination Architecture</h3>
+              <span class="org-chart-badge">Fan-Out / Synthesis</span>
+            </div>
+            
+            <div class="org-chart-svg-container">
+              <svg class="org-chart-svg" viewBox="0 0 460 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- CEO Node -->
+                <rect x="155" y="16" width="150" height="42" rx="2" fill="#FFFFFF" stroke="#1B2233" stroke-width="1.5"/>
+                <circle cx="173" cy="37" r="4.5" fill="#1B2233"/>
+                <text x="186" y="35" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#1B2233">CEO AGENT</text>
+                <text x="186" y="47" font-family="Inter, sans-serif" font-size="8.5" fill="#7A869A">Orchestrator & Synthesis</text>
+
+                <!-- Central Branching Lines -->
+                <path d="M230 58 V100" stroke="#CFC5B6" stroke-width="1.5" stroke-dasharray="2 2"/>
+                <path d="M50 100 H410" stroke="#CFC5B6" stroke-width="1.5"/>
+                
+                <!-- Vertical Drops to 6 Agents -->
+                <path d="M50 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M122 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M194 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M266 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M338 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+                <path d="M410 100 V130" stroke="#CFC5B6" stroke-width="1.5"/>
+
+                <!-- 1. Research Agent (Teal) -->
+                <rect x="16" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="16" y="130" width="68" height="4" fill="#2F6F7E"/>
+                <text x="50" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">RESEARCH</text>
+                <text x="50" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Market &</text>
+                <text x="50" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Competitors</text>
+
+                <!-- 2. Software Engineer Agent (Navy) -->
+                <rect x="88" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="88" y="130" width="68" height="4" fill="#2A4B7C"/>
+                <text x="122" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">ENGINEER</text>
+                <text x="122" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Architecture</text>
+                <text x="122" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">& Code Spec</text>
+
+                <!-- 3. Marketing Agent (Brick) -->
+                <rect x="160" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="160" y="130" width="68" height="4" fill="#8E413C"/>
+                <text x="194" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">MARKETING</text>
+                <text x="194" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Positioning</text>
+                <text x="194" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">& GTM Launch</text>
+
+                <!-- 4. Finance Agent (Olive) -->
+                <rect x="232" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="232" y="130" width="68" height="4" fill="#4E6A3E"/>
+                <text x="266" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">FINANCE</text>
+                <text x="266" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Unit Economics</text>
+                <text x="266" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">& Projections</text>
+
+                <!-- 5. Legal Agent (Plum) -->
+                <rect x="304" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="304" y="130" width="68" height="4" fill="#6E3B68"/>
+                <text x="338" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">LEGAL</text>
+                <text x="338" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Terms & IP</text>
+                <text x="338" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Compliance</text>
+
+                <!-- 6. Designer Agent (Warm Bronze) -->
+                <rect x="376" y="130" width="68" height="68" rx="2" fill="#FFFFFF" stroke="#E3DCD1" stroke-width="1"/>
+                <rect x="376" y="130" width="68" height="4" fill="#7A6048"/>
+                <text x="410" y="152" font-family="Inter, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" fill="#1B2233">DESIGNER</text>
+                <text x="410" y="168" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">Brand System</text>
+                <text x="410" y="179" font-family="Inter, sans-serif" font-size="7.5" text-anchor="middle" fill="#7A869A">& UI/UX Spec</text>
+
+                <!-- Convergence Arrow Back to Synthesis -->
+                <path d="M50 198 V240 H410 V198" stroke="#CFC5B6" stroke-width="1.5" stroke-dasharray="2 2"/>
+                <path d="M230 240 V260" stroke="#3E6B8C" stroke-width="1.5"/>
+                <rect x="135" y="260" width="190" height="26" rx="2" fill="#3E6B8C"/>
+                <text x="230" y="277" font-family="Inter, sans-serif" font-size="9" font-weight="600" text-anchor="middle" fill="#FFFFFF">UNIFIED STARTUP CHARTER</text>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Founding Team Directory (Roster Section) -->
+    <section id="roster" class="roster-section">
+      <div class="container">
+        
+        <div class="section-header-row">
+          <div>
+            <div class="section-meta">Executive Roster</div>
+            <h2>The Founding Team Directory</h2>
+          </div>
+          <p style="max-width: 440px; font-size: 0.95rem;">
+            Not single generic chatbots. Each agent operates with specialized domain heuristics, dedicated context pipelines, and defined company charter responsibilities.
+          </p>
+        </div>
+
+        <div class="roster-directory">
+          
+          <!-- CEO -->
+          <div class="roster-entry" data-agent="ceo">
+            <div class="roster-role-col">
+              <div class="roster-role-title">CEO Agent</div>
+              <div class="roster-role-subtitle">role_id: ceo_executive</div>
+            </div>
+            <div class="roster-desc-col">
+              Interprets the founder's overarching vision, orchestrates parallel execution, resolves inter-agent cross dependencies, and synthesizes the final startup charter.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Orchestration</span>
+              <span class="roster-tag">Synthesis</span>
+              <span class="roster-tag">Roadmap</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <!-- Research -->
+          <div class="roster-entry" data-agent="research">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Research Agent</div>
+              <div class="roster-role-subtitle">role_id: intel_analyst</div>
+            </div>
+            <div class="roster-desc-col">
+              Conducts exhaustive competitor benchmarking, TAM/SAM market modeling, customer persona segmentation, and category churn risk analysis.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Competitors</span>
+              <span class="roster-tag">TAM Sizing</span>
+              <span class="roster-tag">Personas</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <!-- Software Engineer -->
+          <div class="roster-entry" data-agent="engineer">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Software Engineer Agent</div>
+              <div class="roster-role-subtitle">role_id: tech_architect</div>
+            </div>
+            <div class="roster-desc-col">
+              Designs scalable cloud infrastructure, defines schema models, specifies API protocols, and outputs production-ready boilerplate code.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Architecture</span>
+              <span class="roster-tag">Data Models</span>
+              <span class="roster-tag">APIs</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <!-- Marketing -->
+          <div class="roster-entry" data-agent="marketing">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Marketing Agent</div>
+              <div class="roster-role-subtitle">role_id: gtm_growth</div>
+            </div>
+            <div class="roster-desc-col">
+              Formulates positioning narratives, drafts organic launch sequences, constructs viral referral loops, and maps paid acquisition channels.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Positioning</span>
+              <span class="roster-tag">Launch Strategy</span>
+              <span class="roster-tag">Referrals</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <!-- Finance -->
+          <div class="roster-entry" data-agent="finance">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Finance Agent</div>
+              <div class="roster-role-subtitle">role_id: capital_economics</div>
+            </div>
+            <div class="roster-desc-col">
+              Calculates CAC:LTV unit economics, models subscription tier sensitivity, forecasts runway burn rates, and generates investor-grade tables.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Unit Economics</span>
+              <span class="roster-tag">Pricing Model</span>
+              <span class="roster-tag">Burn Forecast</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <!-- Legal -->
+          <div class="roster-entry" data-agent="legal">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Legal Agent</div>
+              <div class="roster-role-subtitle">role_id: compliance_ip</div>
+            </div>
+            <div class="roster-desc-col">
+              Drafts baseline Terms of Service, Privacy Policies (GDPR/CCPA), intellectual property ring-fencing terms, and statutory liability disclaimers.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">ToS & Privacy</span>
+              <span class="roster-tag">IP Strategy</span>
+              <span class="roster-tag">Regulatory</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+          <!-- Designer -->
+          <div class="roster-entry" data-agent="designer">
+            <div class="roster-role-col">
+              <div class="roster-role-title">Designer Agent</div>
+              <div class="roster-role-subtitle">role_id: design_systems</div>
+            </div>
+            <div class="roster-desc-col">
+              Establishes brand visual metaphors, color tokens, typography scales, responsive viewport layouts, and interface wireframe principles.
+            </div>
+            <div class="roster-tags-col">
+              <span class="roster-tag">Design Systems</span>
+              <span class="roster-tag">UI/UX</span>
+              <span class="roster-tag">Color Tokens</span>
+            </div>
+            <div class="roster-status-col">
+              <span class="status-badge"><span class="status-dot"></span> <span class="status-text">Standby</span></span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Executive Document Mockup Preview -->
+    <section id="charter-preview" class="mockup-section">
+      <div class="container">
+        
+        <div style="text-align: center; margin-bottom: var(--spacing-xl);">
+          <div class="section-meta">Artifact Substance</div>
+          <h2>Sample Output: The Unified Startup Charter</h2>
+          <p>Every deliberation culminates in an actionable, executive-ready charter document.</p>
+        </div>
+
+        <div class="charter-doc-mockup">
+          
+          <div class="charter-header-band">
+            <div>
+              <div style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-steel); text-transform: uppercase;">FounderAI Master Charter #0482</div>
+              <div class="charter-doc-title">PulseAI — Adaptive Biometric Fitness Co-Pilot</div>
+            </div>
+            <div class="charter-doc-meta">
+              STATUS: RATIFIED BY AI EXECUTIVE BOARD<br>
+              REVISION: 1.0.4-PROD
+            </div>
+          </div>
+
+          <div class="charter-grid">
+            
+            <div class="charter-card card-ceo">
+              <h4>1.0 Executive Vision & Strategic Thesis</h4>
+              <p>PulseAI establishes the first hardware-agnostic biometric coaching companion. By bridging Apple Health, Oura, and Garmin sensor data into an on-device local inference engine, it delivers intra-workout exertion autoregulation without hardware lock-in.</p>
+            </div>
+
+            <div class="charter-card card-research">
+              <h4>2.0 Market Validation & Moat</h4>
+              <p>TAM of $14.2B with 2.4M hybrid athletes identified as immediate beachhead. Primary wedge: Zero proprietary hardware barrier (vs Whoop $30/mo + strap) paired with autoregulated rest-pause timing.</p>
+            </div>
+
+            <div class="charter-card card-engineer">
+              <h4>3.0 Architectural Infrastructure</h4>
+              <p>Client-side CoreML peak-detection model with Protobuf-over-gRPC encrypted telemetry sync to TimescaleDB. Zero raw biological storage on unauthenticated servers.</p>
+            </div>
+
+            <div class="charter-card card-finance">
+              <h4>4.0 Unit Economics & Target Model</h4>
+              <p>Target pricing at $19.99/mo ($149/yr). Blended CAC target $48.00 against an estimated 14-month LTV of $279.00 (5.81x ratio). Break-even subscriber volume: 4,200 active users.</p>
+            </div>
+
+          </div>
+
+          <div class="charter-disclaimer-box">
+            <strong>Mandatory Legal & Financial Compliance Notice:</strong> Documents produced by FounderAI provide structured strategic planning frameworks and automated drafting assistance. They do not constitute formal legal counsel, tax advice, or certified securities filings.
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="workflow" class="workflow-section">
+      <div class="container">
+        
+        <div class="section-meta">Operational Framework</div>
+        <h2>How the Executive Board Operates</h2>
+
+        <div class="workflow-steps">
+          
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <h3 class="step-title">Brief the CEO Agent</h3>
+            <p class="step-desc">
+              State your startup vision in plain language. The CEO Agent analyzes the mandate, establishes core constraints, and issues parallel work orders to the specialist team.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <h3 class="step-title">Parallel Specialist Execution</h3>
+            <p class="step-desc">
+              Research, Engineering, Marketing, Finance, Legal, and Design agents simultaneously deliberate and construct their respective domain deliverables with real-time dependency checks.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <h3 class="step-title">Unified Charter Synthesis</h3>
+            <p class="step-desc">
+              The CEO Agent harmonizes all domain outputs into a unified, actionable Startup Charter with complete financial models, system architectures, and go-to-market plans.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="brand-logo">
+            <span class="brand-mark">F</span>
+            <span>FounderAI</span>
+          </div>
+          <div class="footer-note">
+            © 2026 FounderAI Systems. Executive Multi-Agent Architecture.
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- =========================================================================
+       VIEW 2: LOGIN MOCKUP VIEW
+       ========================================================================= -->
+  <main id="view-login" class="view-container">
+    <div class="login-view">
+      <div class="login-card">
+        
+        <div class="login-header">
+          <div class="brand-mark" style="margin: 0 auto 12px; width: 36px; height: 36px; font-size: 1.1rem;">F</div>
+          <h2>Executive Authentication</h2>
+          <p>Access your organization's persistent boardroom</p>
+        </div>
+
+        <div id="login-directive-banner" class="login-directive-banner">
+          <strong>Directive Queued</strong>
+          <span id="login-directive-text"></span>
+        </div>
+
+        <form id="mock-login-form">
+          <div class="form-group">
+            <label for="login-email">Founder Email</label>
+            <input type="email" id="login-email" value="founder@pulseai.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="login-password">Access Passcode</label>
+            <input type="password" id="login-password" value="••••••••••••" required>
+          </div>
+
+          <div class="login-actions">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Authorize & Enter Boardroom</button>
+            <button type="button" class="btn btn-secondary" style="width: 100%;" data-view-target="landing">Return to Charter</button>
+          </div>
+        </form>
+
+        <div class="login-demo-bypass">
+          <div class="bypass-text">Prototype Mode Active (No Authentication Required)</div>
+          <button id="btn-login-bypass" type="button" class="btn btn-sm btn-secondary" style="font-size: 0.75rem;">Instant Bypass &rarr; Boardroom</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       VIEW 3: INTERACTIVE BOARDROOM VIEW (ENHANCED)
+       ========================================================================= -->
+  <main id="view-boardroom" class="view-container">
+    <div class="boardroom-view">
+      <div class="boardroom-layout">
+        
+        <!-- Left Column: Agent Directory & Status Tracker -->
+        <aside class="boardroom-sidebar">
+          <div class="sidebar-header">
+            <h3>Active Board Roster</h3>
+            <span class="status-badge" style="font-size: 0.75rem;"><span class="status-dot active"></span> Live</span>
+          </div>
+
+          <div id="sidebar-filter-badge" class="sidebar-filter-indicator">
+            <span id="sidebar-filter-text">Filter: All Agents</span>
+            <span id="sidebar-clear-filter" style="cursor: pointer; font-weight: 700;">✕</span>
+          </div>
+
+          <ul class="sidebar-roster-list">
+            
+            <li class="sidebar-agent-item" data-agent="ceo" title="Click to filter feed or direct-query CEO">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">CEO Agent</span>
+                <span class="sidebar-agent-role">Orchestration & Synthesis</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="research" title="Click to filter feed or direct-query Research">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Research Agent</span>
+                <span class="sidebar-agent-role">Market Intelligence</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="engineer" title="Click to filter feed or direct-query Engineer">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Software Engineer</span>
+                <span class="sidebar-agent-role">Architecture & Stack</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="marketing" title="Click to filter feed or direct-query Marketing">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Marketing Agent</span>
+                <span class="sidebar-agent-role">Positioning & GTM</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="finance" title="Click to filter feed or direct-query Finance">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Finance Agent</span>
+                <span class="sidebar-agent-role">Economics & Projections</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="legal" title="Click to filter feed or direct-query Legal">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Legal Agent</span>
+                <span class="sidebar-agent-role">Compliance & IP</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+            <li class="sidebar-agent-item" data-agent="designer" title="Click to filter feed or direct-query Designer">
+              <div class="sidebar-agent-info">
+                <span class="sidebar-agent-name">Designer Agent</span>
+                <span class="sidebar-agent-role">UI/UX & Brand System</span>
+              </div>
+              <span class="status-badge"><span class="status-dot"></span> <span class="sidebar-status-text">Idle</span></span>
+            </li>
+
+          </ul>
+
+          <div class="sidebar-footer">
+            <button id="btn-reset-boardroom" class="btn btn-secondary btn-sm" style="width: 100%;">Clear & Reset Feed</button>
+          </div>
+        </aside>
+
+        <!-- Center Column: Chronological Meeting Feed -->
+        <section class="boardroom-main">
+          
+          <!-- Topbar with Chairman Status -->
+          <div class="boardroom-topbar">
+            <div class="topbar-topic">
+              <span class="topic-label">Deliberation:</span>
+              <span id="boardroom-topic-title" class="topic-title">PulseAI: Adaptive Biometric Fitness & Nutrition Co-Pilot</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="org-chart-badge" style="font-size: 0.72rem; color: var(--accent-steel);">Founder in Command</span>
+              <button id="btn-export-charter" class="btn btn-primary btn-sm">Export Master Charter</button>
+            </div>
+          </div>
+
+          <!-- Deliberation Phase Progress Tracker -->
+          <div class="deliberation-progress-bar">
+            <div class="stage-step active" id="stage-1"><span class="stage-bullet"></span> 1. Directive & Brief</div>
+            <div class="stage-arrow">→</div>
+            <div class="stage-step" id="stage-2"><span class="stage-bullet"></span> 2. Parallel Specialization</div>
+            <div class="stage-arrow">→</div>
+            <div class="stage-step" id="stage-3"><span class="stage-bullet"></span> 3. Risk & Compliance</div>
+            <div class="stage-arrow">→</div>
+            <div class="stage-step" id="stage-4"><span class="stage-bullet"></span> 4. Charter Synthesis</div>
+          </div>
+
+          <div id="boardroom-feed" class="feed-container">
+            <!-- Dynamically populated via addMessage() -->
+          </div>
+
+          <div class="boardroom-input-container">
+            <form id="boardroom-form" class="input-box-wrapper">
+              <input 
+                type="text" 
+                id="boardroom-input" 
+                class="boardroom-input" 
+                placeholder="Issue a new directive to the team (e.g. adjust pricing tier or change tech stack)..." 
+                autocomplete="off"
+              />
+              <button type="submit" class="btn btn-primary">Dispatch</button>
+            </form>
+          </div>
+
+        </section>
+
+        <!-- Right Column: Live Compiled Charter Synthesis Panel -->
+        <aside class="boardroom-charter-panel">
+          <div class="panel-header">
+            <h3>Live Startup Charter</h3>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-steel);">v1.0-draft</span>
+          </div>
+
+          <div class="charter-live-content">
+            
+            <div class="charter-section-block" data-section="vision" data-agent="ceo" data-default="Awaiting CEO executive synthesis...">
+              <h4>1.0 Executive Thesis</h4>
+              <p>Awaiting CEO executive synthesis...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="market" data-agent="research" data-default="Market intelligence pending...">
+              <h4>2.0 Market & TAM</h4>
+              <p>Market intelligence pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="architecture" data-agent="engineer" data-default="System architecture pending...">
+              <h4>3.0 System Architecture</h4>
+              <p>System architecture pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="gtm" data-agent="marketing" data-default="GTM strategy pending...">
+              <h4>4.0 GTM & Growth</h4>
+              <p>GTM strategy pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="economics" data-agent="finance" data-default="Unit economics pending...">
+              <h4>5.0 Unit Economics</h4>
+              <p>Unit economics pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="compliance" data-agent="legal" data-default="Compliance framework pending...">
+              <h4>6.0 Regulatory & Legal</h4>
+              <p>Compliance framework pending...</p>
+            </div>
+
+            <div class="charter-section-block" data-section="design" data-agent="designer" data-default="Design tokens pending...">
+              <h4>7.0 Design System</h4>
+              <p>Design tokens pending...</p>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  <!-- =========================================================================
+       VIEW 4: FOUNDER PROFILE VIEW
+       ========================================================================= -->
+  <main id="view-profile" class="view-container">
+    <div class="profile-view">
+      <div class="container">
+        
+        <!-- Profile Header -->
+        <div class="profile-header-card">
+          <div class="profile-avatar-row">
+            <div class="profile-avatar-large">TK</div>
+            <div>
+              <div class="profile-name">Taarun K</div>
+              <div class="profile-meta-line">Chairman & Principal Founder • FounderAI Suite v1.0.4</div>
+              <div class="profile-meta-line" style="font-family: var(--font-mono); font-size: 0.78rem; margin-top: 4px;">founder@pulseai.com • ID: fdr_99214</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-primary btn-sm" data-view-target="boardroom">Enter Boardroom</button>
+            <button id="btn-profile-signout" class="btn btn-secondary btn-sm">Sign Out</button>
+          </div>
+        </div>
+
+        <div class="profile-sections-grid">
+          
+          <!-- Column 1: Active Charters & History -->
+          <div>
+            
+            <div class="profile-card">
+              <h3>
+                <span>Active Startup Charters</span>
+                <span class="org-chart-badge" style="font-size: 0.72rem;">3 Ventures</span>
+              </h3>
+              
+              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('fitness')">
+                <div class="charter-history-info">
+                  <h4>PulseAI — Biometric Fitness Co-Pilot</h4>
+                  <div class="charter-history-meta">Status: Ratified by Executive Board • 7 Deliverables</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
+              </div>
+
+              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('b2b')">
+                <div class="charter-history-info">
+                  <h4>LeadForge — Autonomous B2B Sales Agent</h4>
+                  <div class="charter-history-meta">Status: In Deliberation • 4 Deliverables</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
+              </div>
+
+              <div class="charter-history-item" style="cursor: pointer;" onclick="loadPresetFromProfile('dtc')">
+                <div class="charter-history-info">
+                  <h4>RoastClub — Algorithmic Coffee Subscription</h4>
+                  <div class="charter-history-meta">Status: Draft Phase • Market Sizing Complete</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">Open in Boardroom</button>
+              </div>
+            </div>
+
+            <div class="profile-card">
+              <h3><span>Executive Governance & Heuristics</span></h3>
+              <p style="font-size: 0.88rem; color: var(--ink-secondary); margin-bottom: 12px;">
+                Global heuristic rules injected into every specialist agent's context during deliberation cycles.
+              </p>
+              <div style="background-color: var(--bg-paper); border: 1px solid var(--border-hairline); padding: 12px; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5;">
+                • Target CAC Payback: &lt; 6 months<br>
+                • Minimum Gross Margin Threshold: 75%<br>
+                • Regulatory Shield: Automatic FDA 21 CFR § 860 & GDPR Art 9 safe-harbors<br>
+                • System Philosophy: Local-first inference before cloud synchronization
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2: Agent Roster Health & System Engine -->
+          <div>
+            
+            <div class="profile-card">
+              <h3><span>AI Roster Health</span> <span class="status-badge" style="font-size: 0.75rem;"><span class="status-dot active"></span> 7/7 Operational</span></h3>
+              
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">CEO Agent</span>
+                <span class="agent-pref-status">● Online (Synthesis Ready)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Research Agent</span>
+                <span class="agent-pref-status">● Online (Market Intel)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Software Engineer</span>
+                <span class="agent-pref-status">● Online (Architecture)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Marketing Agent</span>
+                <span class="agent-pref-status">● Online (GTM Strategy)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Finance Agent</span>
+                <span class="agent-pref-status">● Online (Unit Economics)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Legal Agent</span>
+                <span class="agent-pref-status">● Online (Compliance)</span>
+              </div>
+              <div class="agent-pref-row">
+                <span class="agent-pref-name">Designer Agent</span>
+                <span class="agent-pref-status">● Online (Design Tokens)</span>
+              </div>
+            </div>
+
+            <div class="profile-card">
+              <h3><span>Intelligence Engine</span></h3>
+              <div style="font-size: 0.85rem; color: var(--ink-secondary); line-height: 1.55;">
+                <div style="margin-bottom: 6px;"><strong>Core Engine:</strong> Google Gemini 2.0 Flash</div>
+                <div style="margin-bottom: 6px;"><strong>Execution Mode:</strong> Parallel Fan-Out / Synthesis</div>
+                <div style="margin-bottom: 6px;"><strong>Encryption:</strong> AES-256 Client-Controlled Keys</div>
+                <div><strong>Jurisdiction:</strong> US Delaware C-Corp / EU Cross-Border</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Local Config (Optional) -->
+  <script src="config.js" onerror="this.remove()"></script>
+  <script src="app.js"></script>
+</body>
+</html>

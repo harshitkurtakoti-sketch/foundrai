@@ -1,0 +1,19 @@
+{
+  "name": "founderai",
+  "version": "1.0.0",
+  "description": "FounderAI — Coordinated AI Executive Founding Team",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y serve . -p 3000",
+    "start": "npx -y serve . -p 3000",
+    "server:py": "python -m http.server 3000"
+  },
+  "keywords": [
+    "founderai",
+    "multi-agent",
+    "boardroom",
+    "ai"
+  ],
+  "author": "FounderAI",
+  "license": "MIT"
+}

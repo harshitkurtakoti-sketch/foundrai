@@ -1,0 +1,1061 @@
+/**
+ * FounderAI — Frontend Application & Simulation Engine
+ * Enhanced Multi-Agent Boardroom Workspace with stage progress, reasoning chains,
+ * agent filtering, and bidirectional charter-to-feed sync.
+ */
+
+// ── AI Engine Configuration ──────────────────────────────────────────────────
+// Groq AI API Configuration (Autonomous Multi-Agent Executive Intelligence)
+// Reads API key dynamically from config.js or browser localStorage
+const GROQ_CONFIG = {
+  apiKey: (typeof window !== 'undefined' && window.GROQ_API_KEY) || 
+          (typeof localStorage !== 'undefined' && localStorage.getItem('foundrai_groq_api_key')) || 
+          '',
+  endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+  model: 'openai/gpt-oss-120b'
+};
+
+// n8n Webhook Configuration (optional secondary webhook)
+const N8N_WEBHOOK_URL = '';
+
+// Agent Meta Registry
+const AGENT_REGISTRY = {
+  ceo: {
+    name: 'CEO Agent',
+    role: 'Orchestration & Executive Synthesis',
+    colorVar: 'var(--agent-ceo)',
+    tag: 'Executive'
+  },
+  research: {
+    name: 'Research Agent',
+    role: 'Market, Trend & Competitor Intelligence',
+    colorVar: 'var(--agent-research)',
+    tag: 'Intelligence'
+  },
+  engineer: {
+    name: 'Software Engineer Agent',
+    role: 'System Architecture & Technical Stack',
+    colorVar: 'var(--agent-engineer)',
+    tag: 'Architecture'
+  },
+  marketing: {
+    name: 'Marketing Agent',
+    role: 'Positioning, Brand & GTM Launch Strategy',
+    colorVar: 'var(--agent-marketing)',
+    tag: 'Growth'
+  },
+  finance: {
+    name: 'Finance Agent',
+    role: 'Unit Economics, Pricing & Financial Model',
+    colorVar: 'var(--agent-finance)',
+    tag: 'Capital'
+  },
+  legal: {
+    name: 'Legal Agent',
+    role: 'Compliance, IP Framework & Terms of Service',
+    colorVar: 'var(--agent-legal)',
+    tag: 'Compliance'
+  },
+  designer: {
+    name: 'Designer Agent',
+    role: 'Brand Identity & User Experience Direction',
+    colorVar: 'var(--agent-designer)',
+    tag: 'Design System'
+  }
+};
+
+// Application State
+const state = {
+  currentView: 'landing', // 'landing' | 'login' | 'boardroom' | 'profile'
+  isAuthenticated: false,
+  isSimulating: false,
+  simulationTimer: null,
+  activeTopic: '',
+  activeFilter: null, // null or agentId string
+  currentPhase: 1,
+  pendingPrompt: '',
+  pendingPreset: 'fitness',
+  agentStatuses: {
+    ceo: 'idle',
+    research: 'idle',
+    engineer: 'idle',
+    marketing: 'idle',
+    finance: 'idle',
+    legal: 'idle',
+    designer: 'idle'
+  },
+  charterData: {
+    vision: '',
+    market: '',
+    architecture: '',
+    gtm: '',
+    economics: '',
+    compliance: '',
+    design: ''
+  }
+};
+
+// Preset Scenarios with Enhanced Reasoning Chains
+const PRESETS = {
+  fitness: {
+    topic: 'PulseAI: Adaptive Biometric Fitness & Nutrition Co-Pilot',
+    prompt: 'I want to build an AI fitness companion that syncs with Apple Watch & Whoop to create real-time dynamic workout and meal adjustments.',
+    steps: [
+      {
+        agent: 'ceo',
+        phase: 1,
+        time: '00:01',
+        title: 'Executive Charter & Delegation Brief',
+        reasoning: 'Synthesizing founder directive: High-growth biometric market, zero-hardware barrier, needs strict medical disclaimer and high LTV/CAC retention moat.',
+        content: `
+          <p><strong>Executive Directive:</strong> We are launching <em>PulseAI</em> — a hyper-personalized, biometric-driven health companion targeting premium performance athletes and busy professionals.</p>
+          <p><strong>Operational Mandates:</strong></p>
+          <ul>
+            <li><strong>Research:</strong> Map competitive landscape against Whoop Coach, Apple Fitness+, and Freeletics. Identify churn vulnerabilities.</li>
+            <li><strong>Engineering:</strong> Outline real-time health data ingestion engine (HealthKit / Google Health Connect) with local-first inference.</li>
+            <li><strong>Marketing:</strong> Build high-converting B2C waitlist strategy and micro-influencer fitness creator affiliate loop.</li>
+            <li><strong>Finance:</strong> Model $19.99/mo subscription tier vs $149/yr annual pass with CAC payback targets &lt; 4 months.</li>
+            <li><strong>Legal:</strong> Draft HIPAA/GDPR health telemetry storage boundaries and clear "Not Medical Advice" liability shield.</li>
+            <li><strong>Designer:</strong> Specify high-contrast, glanceable telemetry dashboard with minimal cognitive load during workouts.</li>
+          </ul>
+        `
+      },
+      {
+        agent: 'research',
+        phase: 2,
+        time: '00:03',
+        title: 'Market Intelligence & Competitive Landscape',
+        reasoning: 'Audited 18 direct/indirect competitors. Key moat identified: Consumers resent $30/mo proprietary bands (Whoop); open API biometric integration solves adoption friction.',
+        content: `
+          <p>Completed competitive benchmarking across 18 fitness intelligence apps:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Competitor</th>
+                <th>Price Point</th>
+                <th>Core Weakness</th>
+                <th>PulseAI Advantage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Whoop Coach</td>
+                <td>$30/mo</td>
+                <td>Requires $200+ proprietary hardware band</td>
+                <td>Hardware-agnostic (Apple, Garmin, Oura)</td>
+              </tr>
+              <tr>
+                <td>Freeletics</td>
+                <td>$12/mo</td>
+                <td>Static algorithmic plans, no real-time biometric adapt</td>
+                <td>Intra-workout exertion autoregulation</td>
+              </tr>
+              <tr>
+                <td>Fitbod</td>
+                <td>$15/mo</td>
+                <td>Lacks holistic recovery and metabolic nutrition context</td>
+                <td>Unified sleep, strain, and macronutrient engine</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>Target Beachhead:</strong> 2.4M hybrid athletes (CrossFit / Hyrox / Marathon runners) who already wear smartwatches but lack unified intelligent coaching.</p>
+        `,
+        charterKey: 'market',
+        charterSnippet: 'TAM: $14.2B global fitness software. Target beachhead: 2.4M hybrid athletes seeking unified recovery & real-time strain adjustment across standard smartwatches.'
+      },
+      {
+        agent: 'engineer',
+        phase: 2,
+        time: '00:06',
+        title: 'System Architecture & Data Pipeline',
+        reasoning: 'Engineered sub-10ms latency loop. Raw high-frequency accelerometer streams processed on-device (CoreML); only aggregated telemetry frames sync to backend.',
+        content: `
+          <p><strong>Recommended Core Architecture:</strong></p>
+          <pre><code>[Wearable Sensor Feed] ──(Bluetooth LE)──> [Mobile Client (Swift/Kotlin)]
+                                                    │
+                   ┌────────────────────────────────┴────────────────────────┐
+                   ▼                                                         ▼
+    [Local On-Device Filtering]                                 [Encrypted Telemetry Sync]
+    • HRV anomaly detection                                     • gRPC / Protobuf
+    • Real-time rep cadence                                     • TimeScaleDB Time-Series
+                                                                             │
+                                                                             ▼
+                                                                [Adaptive LLM Agent Pipeline]
+                                                                • FastAPI + PyTorch Serving
+                                                                • Redis Vector Recovery Cache</code></pre>
+          <p><strong>Key Technical Decisions:</strong></p>
+          <ul>
+            <li><strong>Local Sensor Processing:</strong> Run accelerometer & gyroscope peak-detection directly on-device using CoreML to maintain zero latency without cellular connectivity.</li>
+            <li><strong>Privacy-Preserving Telemetry:</strong> All biometric payload frames encrypted using AES-256 with user-controlled private keys.</li>
+          </ul>
+        `,
+        charterKey: 'architecture',
+        charterSnippet: 'Event-driven time-series pipeline (FastAPI + TimescaleDB) coupled with CoreML on-device inference for real-time sensor processing and zero-latency feedback.'
+      },
+      {
+        agent: 'designer',
+        phase: 2,
+        time: '00:09',
+        title: 'Design System & Interaction Blueprint',
+        reasoning: 'User ergonomics in high-strain environments: Heart rate >160bpm impairs fine motor control. Mandated large tap targets (minimum 48x48pt) and high-contrast dark telemetry.',
+        content: `
+          <p><strong>Visual Metaphor:</strong> "Cockpit Instrumentation for Human Biology." Avoid loud neon gradients that cause visual fatigue during high-strain activity.</p>
+          <ul>
+            <li><strong>Palette:</strong> Deep Slate Canvas (<code>#0D1117</code>), Hyper-Readable Electric Mint (<code>#00E599</code>) for active strain metrics, Crisp Milk (<code>#F0F6FC</code>) for typography.</li>
+            <li><strong>Typography:</strong> <em>JetBrains Mono</em> for all numerical telemetry; <em>Inter</em> for contextual coaching insights.</li>
+            <li><strong>One-Thumb Navigation:</strong> Primary controls located in bottom 35% of the screen; high-friction gym environment usability.</li>
+          </ul>
+        `,
+        charterKey: 'design',
+        charterSnippet: 'Glanceable dark telemetry interface with high-contrast biological telemetry metrics, zero visual noise, and one-thumb reachable controls.'
+      },
+      {
+        agent: 'marketing',
+        phase: 2,
+        time: '00:12',
+        title: 'Go-To-Market & Growth Architecture',
+        reasoning: 'Organic distribution engine modeled around Strava / Instagram workout shareability with viral squad leaderboard mechanics.',
+        content: `
+          <p><strong>Phase 1: Founder-Led Beachhead (Months 1–3)</strong></p>
+          <ul>
+            <li><strong>Strava & Garmin Integration Hook:</strong> "Auto-generated biometric workout retrospectives" that users can share with one tap to Instagram Stories & Strava feed.</li>
+            <li><strong>Creator Co-Op:</strong> Seed 50 mid-tier CrossFit & marathon coaches with lifetime executive access in exchange for weekly training breakdowns.</li>
+            <li><strong>Viral Waitlist Mechanics:</strong> Move up 50 spots for every workout buddy onboarded to a private squad.</li>
+          </ul>
+        `,
+        charterKey: 'gtm',
+        charterSnippet: 'GTM Strategy: Strava auto-retrospective sharing loops, 50-coach creator seeding program, and tiered private squad waitlist mechanics.'
+      },
+      {
+        agent: 'finance',
+        phase: 3,
+        time: '00:15',
+        title: 'Unit Economics & Financial Projections',
+        reasoning: 'Benchmarked against SaaS fitness benchmarks (Strava, WHOOP, Peloton). Target LTV:CAC of 5.81x with 14-month retention baseline.',
+        content: `
+          <p><strong>Core Unit Economics Model:</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Conservative</th>
+                <th>Target</th>
+                <th>Aggressive</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Monthly ARPU</td>
+                <td>$14.99</td>
+                <td>$19.99</td>
+                <td>$24.99</td>
+              </tr>
+              <tr>
+                <td>Customer Acquisition Cost (CAC)</td>
+                <td>$62.00</td>
+                <td>$48.00</td>
+                <td>$35.00</td>
+              </tr>
+              <tr>
+                <td>Estimated LTV (14-mo avg)</td>
+                <td>$209.00</td>
+                <td>$279.00</td>
+                <td>$349.00</td>
+              </tr>
+              <tr>
+                <td>LTV : CAC Ratio</td>
+                <td>3.37x</td>
+                <td>5.81x</td>
+                <td>9.97x</td>
+              </tr>
+            </tbody>
+          </table>
+          <p><strong>12-Month Break-Even Target:</strong> 4,200 active paying subscribers required to cover server infrastructure, model API inference, and 3 full-time core engineers.</p>
+        `,
+        disclaimer: 'Financial estimates and unit economics projections are generated for strategic planning purposes only and do not constitute certified financial or investment advice.',
+        charterKey: 'economics',
+        charterSnippet: 'Target ARPU: $19.99/mo | Estimated LTV: $279 | LTV:CAC 5.8x | Break-even requirement: 4,200 active paid subscribers.'
+      },
+      {
+        agent: 'legal',
+        phase: 3,
+        time: '00:18',
+        title: 'Regulatory, Privacy & IP Safeguards',
+        reasoning: 'Constructed multi-jurisdiction risk buffer: FDA 21 CFR § 860 wellness boundaries, HIPAA safe-harbor, and GDPR Article 9 explicit biometric consent protocol.',
+        content: `
+          <p><strong>Key Compliance Frameworks:</strong></p>
+          <ul>
+            <li><strong>Non-Diagnostic Health Disclaimer:</strong> Clear statutory barrier categorizing PulseAI as a wellness tool rather than an FDA-regulated medical diagnostic device under 21 CFR § 860.</li>
+            <li><strong>GDPR Article 9 (Special Category Data):</strong> Explicit, separate user consent checkbox for processing biometric data with immediate, one-click permanent data erasure capability.</li>
+            <li><strong>Algorithmic IP Protection:</strong> Proprietary dynamic training autoregulation weights kept server-side; client binary contains no proprietary weighting logic.</li>
+          </ul>
+        `,
+        disclaimer: 'Legal agent outputs provide generalized informational frameworks only and do not constitute formal legal counsel. Always engage qualified legal counsel for jurisdiction-specific compliance.',
+        charterKey: 'compliance',
+        charterSnippet: 'FDA wellness exemption positioning (21 CFR § 860), GDPR Article 9 explicit biometric consent protocol, and server-side IP isolation.'
+      },
+      {
+        agent: 'ceo',
+        phase: 4,
+        time: '00:21',
+        title: 'Final Synthesis & Executive Approval',
+        reasoning: 'Synthesizing all 6 specialist outputs into FounderAI Master Startup Charter #0482. Ratified for immediate execution.',
+        content: `
+          <p><strong>Executive Summary & Synthesis:</strong> All operational directives have been delivered and verified across research, engineering, design, marketing, finance, and compliance.</p>
+          <p>The <strong>PulseAI Master Startup Charter</strong> is now compiled and ready for founder execution. Review the completed summary in the right-hand panel or export the full charter dossier.</p>
+        `,
+        charterKey: 'vision',
+        charterSnippet: 'PulseAI is positioned as the definitive hardware-agnostic biometric co-pilot with unit economics targeting 5.8x LTV:CAC and clean regulatory shielding.'
+      }
+    ]
+  },
+  b2b: {
+    topic: 'LeadForge: Autonomous B2B Pipeline Intelligence Agent',
+    prompt: 'I want to build an autonomous agent that enriches inbound sales leads and crafts hyper-personalized multi-channel outreach sequences.'
+  },
+  dtc: {
+    topic: 'RoastClub: Algorithmically Tuned Micro-Lot Coffee Subscription',
+    prompt: 'I want to launch a specialty coffee subscription that calibrates roast profiles to user brewing methods and flavor surveys.'
+  }
+};
+
+// DOM Elements
+const views = {
+  landing: document.getElementById('view-landing'),
+  login: document.getElementById('view-login'),
+  boardroom: document.getElementById('view-boardroom'),
+  profile: document.getElementById('view-profile')
+};
+
+// Update Dynamic Header State
+function updateHeaderAuthState() {
+  const guestHeader = document.getElementById('header-actions-guest');
+  const authHeader = document.getElementById('header-actions-auth');
+  const boardroomBtn = document.getElementById('btn-header-boardroom');
+
+  if (state.isAuthenticated) {
+    if (guestHeader) guestHeader.style.display = 'none';
+    if (authHeader) authHeader.style.display = 'flex';
+    if (boardroomBtn) {
+      boardroomBtn.style.display = state.currentView === 'boardroom' ? 'none' : 'inline-flex';
+    }
+  } else {
+    if (guestHeader) guestHeader.style.display = 'flex';
+    if (authHeader) authHeader.style.display = 'none';
+  }
+}
+
+// Navigation
+function switchView(viewName) {
+  state.currentView = viewName;
+  
+  if (viewName === 'boardroom' || viewName === 'profile') {
+    state.isAuthenticated = true;
+  }
+
+  // Toggle View Containers
+  Object.keys(views).forEach(key => {
+    if (views[key]) {
+      views[key].classList.toggle('active', key === viewName);
+    }
+  });
+
+  updateHeaderAuthState();
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Sign Out Handler
+function signOut() {
+  state.isAuthenticated = false;
+  state.pendingPrompt = '';
+  resetBoardroom();
+  switchView('landing');
+}
+
+// Profile Quick Launch
+window.loadPresetFromProfile = function(presetKey) {
+  const preset = PRESETS[presetKey];
+  if (preset) {
+    switchView('boardroom');
+    runSimulation(preset.prompt, presetKey);
+  }
+};
+
+// Update Stage Progress Bar
+function setStage(stageNumber) {
+  state.currentPhase = stageNumber;
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById(`stage-${i}`);
+    if (!el) continue;
+    if (i < stageNumber) {
+      el.className = 'stage-step completed';
+    } else if (i === stageNumber) {
+      el.className = 'stage-step active';
+    } else {
+      el.className = 'stage-step';
+    }
+  }
+}
+
+// Update Agent Sidebar Status
+function setStatus(agentId, status) {
+  if (!AGENT_REGISTRY[agentId]) return;
+  state.agentStatuses[agentId] = status;
+
+  // Update sidebar dots in Boardroom
+  const item = document.querySelector(`.sidebar-agent-item[data-agent="${agentId}"]`);
+  if (item) {
+    const dot = item.querySelector('.status-dot');
+    const label = item.querySelector('.sidebar-status-text');
+    if (dot) {
+      dot.className = `status-dot ${status}`;
+    }
+    if (label) {
+      label.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    }
+  }
+
+  // Update Roster dots on Landing page if present
+  const rosterEntry = document.querySelector(`.roster-entry[data-agent="${agentId}"]`);
+  if (rosterEntry) {
+    const rDot = rosterEntry.querySelector('.status-dot');
+    const rLabel = rosterEntry.querySelector('.status-text');
+    if (rDot) rDot.className = `status-dot ${status}`;
+    if (rLabel) rLabel.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  }
+}
+
+// Filter Feed by Agent
+function filterFeed(agentId) {
+  state.activeFilter = agentId;
+  const feed = document.getElementById('boardroom-feed');
+  const filterBadge = document.getElementById('sidebar-filter-badge');
+  const filterText = document.getElementById('sidebar-filter-text');
+
+  document.querySelectorAll('.sidebar-agent-item').forEach(item => {
+    item.classList.toggle('selected', item.getAttribute('data-agent') === agentId);
+  });
+
+  if (agentId) {
+    const agent = AGENT_REGISTRY[agentId];
+    if (filterBadge) filterBadge.classList.add('active');
+    if (filterText) filterText.textContent = `Showing: ${agent ? agent.name : agentId}`;
+    
+    if (feed) {
+      feed.querySelectorAll('.meeting-note').forEach(note => {
+        const noteAgent = note.getAttribute('data-agent');
+        note.style.display = (noteAgent === agentId || noteAgent === 'user') ? 'block' : 'none';
+      });
+    }
+  } else {
+    if (filterBadge) filterBadge.classList.remove('active');
+    if (feed) {
+      feed.querySelectorAll('.meeting-note').forEach(note => {
+        note.style.display = 'block';
+      });
+    }
+  }
+}
+
+// Add Structured Meeting Note Message to Feed
+function addMessage(agentId, title, content, meta = {}) {
+  const feed = document.getElementById('boardroom-feed');
+  if (!feed) return;
+
+  const agent = AGENT_REGISTRY[agentId] || {
+    name: agentId === 'user' ? 'Founder' : 'System',
+    role: agentId === 'user' ? 'Product Visionary' : 'Orchestration',
+    tag: agentId === 'user' ? 'Founder' : 'Notice'
+  };
+
+  const timeStr = meta.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  const noteDiv = document.createElement('div');
+  noteDiv.className = 'meeting-note';
+  noteDiv.setAttribute('data-agent', agentId);
+  noteDiv.id = `note-${agentId}-${Date.now()}`;
+
+  let disclaimerHtml = '';
+  if (meta.disclaimer) {
+    disclaimerHtml = `
+      <div class="disclaimer-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span><strong>Regulatory Disclaimer:</strong> ${meta.disclaimer}</span>
+      </div>
+    `;
+  }
+
+  let reasoningHtml = '';
+  if (meta.reasoning) {
+    reasoningHtml = `
+      <div class="agent-reasoning-toggle" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span>🧠 Agent Reasoning / Heuristic Chain ▸</span>
+      </div>
+      <div class="agent-reasoning-content">
+        ${meta.reasoning}
+      </div>
+    `;
+  }
+
+  let actionsHtml = '';
+  if (agentId !== 'user') {
+    actionsHtml = `
+      <div class="note-actions-bar">
+        <button class="note-action-btn" onclick="directQueryAgent('${agentId}')">💬 Direct Follow-up</button>
+        <button class="note-action-btn" onclick="copyNoteContent(this)">📋 Copy Section</button>
+      </div>
+    `;
+  }
+
+  noteDiv.innerHTML = `
+    <div class="note-header">
+      <div class="note-agent-meta">
+        <span class="note-agent-badge">${agent.name}</span>
+        <span class="roster-role-subtitle">${agent.role}</span>
+      </div>
+      <div class="note-time">${timeStr}</div>
+    </div>
+    <div class="note-body">
+      ${reasoningHtml}
+      ${title ? `<h4 style="margin-bottom: 8px; font-family: var(--font-serif);">${title}</h4>` : ''}
+      ${content}
+      ${disclaimerHtml}
+      ${actionsHtml}
+    </div>
+  `;
+
+  feed.appendChild(noteDiv);
+  
+  // If active filter is on, adjust visibility
+  if (state.activeFilter && state.activeFilter !== agentId && agentId !== 'user') {
+    noteDiv.style.display = 'none';
+  }
+
+  feed.scrollTop = feed.scrollHeight;
+}
+
+// Quick action: Direct query an agent
+window.directQueryAgent = function(agentId) {
+  const input = document.getElementById('boardroom-input');
+  const agent = AGENT_REGISTRY[agentId];
+  if (input && agent) {
+    input.value = `@${agent.name}: `;
+    input.focus();
+  }
+};
+
+// Quick action: Copy note content
+window.copyNoteContent = function(btn) {
+  const noteBody = btn.closest('.note-body');
+  if (noteBody) {
+    navigator.clipboard.writeText(noteBody.innerText);
+    const orig = btn.innerText;
+    btn.innerText = '✓ Copied!';
+    setTimeout(() => { btn.innerText = orig; }, 1500);
+  }
+};
+
+// Update Charter Summary in Right Panel
+function updateCharterSnippet(key, text) {
+  if (!key || !text) return;
+  state.charterData[key] = text;
+  
+  const block = document.querySelector(`.charter-section-block[data-section="${key}"]`);
+  if (block) {
+    block.classList.add('filled');
+    const p = block.querySelector('p');
+    if (p) {
+      p.textContent = text;
+    }
+  }
+}
+
+// Reset Boardroom
+function resetBoardroom() {
+  if (state.simulationTimer) {
+    clearTimeout(state.simulationTimer);
+    state.simulationTimer = null;
+  }
+  state.isSimulating = false;
+  filterFeed(null);
+  setStage(1);
+
+  const feed = document.getElementById('boardroom-feed');
+  if (feed) feed.innerHTML = '';
+
+  Object.keys(AGENT_REGISTRY).forEach(agentId => {
+    setStatus(agentId, 'idle');
+  });
+
+  // Reset Charter blocks
+  document.querySelectorAll('.charter-section-block').forEach(block => {
+    block.classList.remove('filled');
+    const defaultText = block.getAttribute('data-default') || 'Pending deliberation...';
+    const p = block.querySelector('p');
+    if (p) p.textContent = defaultText;
+  });
+}
+
+// ── AI Engine Integration (Groq Multi-Agent Orchestration) ──────────────────────
+
+const GROQ_SYSTEM_PROMPT = `You are the FoundrAI Autonomous Executive Suite Brain.
+When given a founder's startup directive, deliberate and generate an in-depth, realistic, high-impact multi-agent executive deliberation and ratified startup charter.
+You must return a valid JSON object matching this schema:
+{
+  "topic": "Venture Name: Subtitle",
+  "steps": [
+    {
+      "agent": "ceo",
+      "phase": 1,
+      "time": "00:01",
+      "title": "Executive Charter & Delegation Brief",
+      "reasoning": "High-level strategic rationale and operational imperatives.",
+      "content": "<p><strong>Executive Directive:</strong> Directive details...</p><p><strong>Operational Mandates:</strong></p><ul><li><strong>Research:</strong> Mandate...</li><li><strong>Engineering:</strong> Mandate...</li><li><strong>Marketing:</strong> Mandate...</li><li><strong>Finance:</strong> Mandate...</li><li><strong>Legal:</strong> Mandate...</li><li><strong>Designer:</strong> Mandate...</li></ul>",
+      "charterKey": "vision",
+      "charterSnippet": "1-2 sentence core executive thesis."
+    },
+    {
+      "agent": "research",
+      "phase": 2,
+      "time": "00:03",
+      "title": "Market Intelligence & Competitor Landscape",
+      "reasoning": "Competitor benchmarking and TAM analysis heuristics.",
+      "content": "<p>Benchmarking insights and beachhead customer profile...</p><table><thead><tr><th>Competitor</th><th>Price</th><th>Weakness</th><th>Advantage</th></tr></thead><tbody><tr><td>Comp A</td><td>$XX</td><td>Weakness</td><td>Our Moat</td></tr></tbody></table>",
+      "charterKey": "market",
+      "charterSnippet": "TAM sizing, beachhead customer segment, and core competitive moat."
+    },
+    {
+      "agent": "engineer",
+      "phase": 2,
+      "time": "00:06",
+      "title": "System Architecture & Technical Stack",
+      "reasoning": "Latency, security, and scalability trade-offs.",
+      "content": "<p><strong>Recommended Core Architecture:</strong></p><ul><li>Architecture & cloud infra specs</li><li>Data pipeline & model serving</li><li>Security & key APIs</li></ul>",
+      "charterKey": "architecture",
+      "charterSnippet": "Core tech stack, data pipeline, and system infrastructure."
+    },
+    {
+      "agent": "designer",
+      "phase": 2,
+      "time": "00:09",
+      "title": "Design System & UI/UX Interaction Blueprint",
+      "reasoning": "User ergonomics, cognitive load, and accessibility heuristics.",
+      "content": "<p><strong>Visual Metaphor & Palette:</strong></p><ul><li>Color tokens and contrast ratios</li><li>Typography pairings</li><li>Core interaction flow</li></ul>",
+      "charterKey": "design",
+      "charterSnippet": "Visual design tokens, typography, and interface ergonomics."
+    },
+    {
+      "agent": "marketing",
+      "phase": 2,
+      "time": "00:12",
+      "title": "Go-To-Market & Growth Architecture",
+      "reasoning": "Organic distribution loops and CAC efficiency modeling.",
+      "content": "<p><strong>Phase 1: Beachhead Launch:</strong></p><ul><li>Distribution channels and viral loops</li><li>Creator / partnership strategy</li><li>Waitlist & referral mechanics</li></ul>",
+      "charterKey": "gtm",
+      "charterSnippet": "Primary acquisition engine, organic loops, and launch roadmap."
+    },
+    {
+      "agent": "finance",
+      "phase": 3,
+      "time": "00:15",
+      "title": "Unit Economics & Financial Projections",
+      "reasoning": "SaaS unit economic benchmarks and gross margin sensitivity.",
+      "content": "<p><strong>Core Unit Economics Model:</strong></p><table><thead><tr><th>Metric</th><th>Target</th></tr></thead><tbody><tr><td>ARPU</td><td>$XX/mo</td></tr><tr><td>Target CAC</td><td>$XX</td></tr><tr><td>Estimated LTV</td><td>$XX</td></tr><tr><td>LTV:CAC</td><td>5.X</td></tr></tbody></table><p><strong>Break-Even Target:</strong> X subscribers / contracts required.</p>",
+      "disclaimer": "Financial estimates and projections are generated for strategic planning purposes only and do not constitute certified financial or investment advice.",
+      "charterKey": "economics",
+      "charterSnippet": "Pricing model, target CAC/LTV ratio, and break-even subscriber threshold."
+    },
+    {
+      "agent": "legal",
+      "phase": 3,
+      "time": "00:18",
+      "title": "Regulatory, Privacy & IP Safeguards",
+      "reasoning": "Statutory boundaries, data privacy regimes, and liability mitigation.",
+      "content": "<p><strong>Compliance Frameworks:</strong></p><ul><li>Regulatory boundaries & safe harbors</li><li>Data privacy (GDPR / CCPA) protocols</li><li>Intellectual property protection</li></ul>",
+      "disclaimer": "Legal agent outputs provide generalized informational frameworks only and do not constitute formal legal counsel.",
+      "charterKey": "compliance",
+      "charterSnippet": "Regulatory posture, privacy safe-harbors, and IP protection terms."
+    },
+    {
+      "agent": "ceo",
+      "phase": 4,
+      "time": "00:21",
+      "title": "Final Synthesis & Master Charter Ratification",
+      "reasoning": "Harmonizing all 6 domain outputs into unified actionable master charter.",
+      "content": "<p><strong>Executive Summary & Synthesis:</strong> All operational directives have been verified across research, engineering, design, marketing, finance, and compliance.</p><p>The <strong>Master Startup Charter</strong> is now ratified and ready for founder execution.</p>",
+      "charterKey": "vision",
+      "charterSnippet": "Ratified master startup charter synthesized across all 6 departments."
+    }
+  ]
+}`;
+
+/**
+ * Call Groq AI API with structured multi-agent executive prompt.
+ */
+async function callGroqAI(userPrompt) {
+  if (!GROQ_CONFIG.apiKey) {
+    throw new Error('Groq API Key is not configured.');
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+
+  try {
+    const response = await fetch(GROQ_CONFIG.endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_CONFIG.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: GROQ_CONFIG.model,
+        messages: [
+          { role: 'system', content: GROQ_SYSTEM_PROMPT },
+          { role: 'user', content: `Founder Directive: ${userPrompt}` }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.7
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      throw new Error(`Groq API returned HTTP ${response.status}: ${errText}`);
+    }
+
+    const data = await response.json();
+    const rawContent = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!rawContent) {
+      throw new Error('Empty response from Groq AI.');
+    }
+
+    return JSON.parse(rawContent);
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      throw new Error('Groq AI request timed out. Please try again.');
+    }
+    throw err;
+  }
+}
+
+// ── Multi-Agent Playback & Simulation Engine ────────────────────────────────────
+
+async function runSimulation(promptText, presetKey = 'fitness') {
+  resetBoardroom();
+  state.isSimulating = true;
+  switchView('boardroom');
+
+  const preset = PRESETS[presetKey] || PRESETS.fitness;
+  const initialPrompt = promptText || preset.prompt;
+  const topicTitle = document.getElementById('boardroom-topic-title');
+  if (topicTitle) {
+    topicTitle.textContent = preset.topic || initialPrompt;
+  }
+
+  // 1. Post Founder Directive to Feed
+  addMessage('user', 'Founding Directive', `<p>${initialPrompt}</p>`, {
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+
+  setStage(1);
+  setStatus('ceo', 'active');
+
+  let steps = null;
+
+  // 2. Fetch Multi-Agent Intelligence from Groq AI (if API key present)
+  if (GROQ_CONFIG.apiKey) {
+    // Show active thinking animation on CEO agent
+    const agentIds = Object.keys(AGENT_REGISTRY);
+    let tick = 0;
+    const loadingInterval = setInterval(() => {
+      tick++;
+      const currentIdx = tick % agentIds.length;
+      setStatus(agentIds[currentIdx], 'active');
+      if (tick > 1) {
+        setStatus(agentIds[(tick - 1) % agentIds.length], 'idle');
+      }
+    }, 400);
+
+    try {
+      const aiResult = await callGroqAI(initialPrompt);
+      clearInterval(loadingInterval);
+      agentIds.forEach(id => setStatus(id, 'idle'));
+
+      if (aiResult.topic && topicTitle) {
+        topicTitle.textContent = aiResult.topic;
+      }
+
+      if (Array.isArray(aiResult.steps) && aiResult.steps.length > 0) {
+        steps = aiResult.steps;
+      }
+    } catch (err) {
+      clearInterval(loadingInterval);
+      console.warn('Groq AI API error, falling back to preset steps:', err);
+      // If error occurs, fall back to preset steps so user always gets an executive response
+      steps = preset.steps || PRESETS.fitness.steps;
+    }
+  } else {
+    steps = preset.steps || PRESETS.fitness.steps;
+  }
+
+  if (!steps || steps.length === 0) {
+    steps = PRESETS.fitness.steps;
+  }
+
+  // 3. Play through generated steps with realistic executive deliberation rhythm
+  let currentStepIdx = 0;
+
+  function executeNextStep() {
+    if (currentStepIdx >= steps.length) {
+      state.isSimulating = false;
+      return;
+    }
+
+    const step = steps[currentStepIdx];
+
+    // Update progress bar
+    if (step.phase) {
+      setStage(step.phase);
+    }
+
+    // Previous agent status to done
+    if (currentStepIdx > 0) {
+      const prevStep = steps[currentStepIdx - 1];
+      if (prevStep.agent !== step.agent) {
+        setStatus(prevStep.agent, 'done');
+      }
+    }
+
+    // Current agent active
+    setStatus(step.agent, 'active');
+
+    // Add structured deliberation message to feed
+    addMessage(step.agent, step.title, step.content, {
+      time: step.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      disclaimer: step.disclaimer,
+      reasoning: step.reasoning
+    });
+
+    // Update live charter summary panel
+    if (step.charterKey && step.charterSnippet) {
+      updateCharterSnippet(step.charterKey, step.charterSnippet);
+    }
+
+    currentStepIdx++;
+
+    if (currentStepIdx < steps.length) {
+      state.simulationTimer = setTimeout(executeNextStep, 950);
+    } else {
+      setTimeout(() => {
+        setStatus(step.agent, 'done');
+        setStage(4);
+        state.isSimulating = false;
+      }, 600);
+    }
+  }
+
+  state.simulationTimer = setTimeout(executeNextStep, 500);
+}
+
+
+// Initialization & Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. View Navigation
+  document.querySelectorAll('[data-view-target]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = el.getAttribute('data-view-target');
+      switchView(target);
+    });
+  });
+
+  // Floating Demo Buttons
+  document.querySelectorAll('.demo-view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-view');
+      switchView(target);
+    });
+  });
+
+  // 2. Hero Prompt Submission (Workflow Step 1 -> Step 2)
+  const heroForm = document.getElementById('hero-prompt-form');
+  const heroInput = document.getElementById('hero-prompt-input');
+  const loginBanner = document.getElementById('login-directive-banner');
+  const loginDirectiveText = document.getElementById('login-directive-text');
+
+  function queueDirectiveAndGoToLogin(promptText, presetKey = 'fitness') {
+    state.pendingPrompt = promptText;
+    state.pendingPreset = presetKey;
+
+    if (loginBanner && loginDirectiveText) {
+      if (promptText) {
+        loginDirectiveText.textContent = `"${promptText}"`;
+        loginBanner.classList.add('visible');
+      } else {
+        loginBanner.classList.remove('visible');
+      }
+    }
+    switchView('login');
+  }
+
+  if (heroForm && heroInput) {
+    heroForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = heroInput.value.trim() || 'I want to build an AI fitness companion.';
+      queueDirectiveAndGoToLogin(text, 'fitness');
+    });
+  }
+
+  // Quick Tags on Landing Page (Workflow Step 1 -> Step 2)
+  document.querySelectorAll('.quick-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const presetKey = tag.getAttribute('data-preset');
+      const preset = PRESETS[presetKey];
+      if (preset) {
+        if (heroInput) heroInput.value = preset.prompt;
+        queueDirectiveAndGoToLogin(preset.prompt, presetKey);
+      }
+    });
+  });
+
+  // 3. Login Submission / Bypass (Workflow Step 2 -> Step 3)
+  function completeAuthAndEnterBoardroom() {
+    switchView('boardroom');
+    if (state.pendingPrompt) {
+      const promptToRun = state.pendingPrompt;
+      const presetToRun = state.pendingPreset || 'fitness';
+      state.pendingPrompt = '';
+      runSimulation(promptToRun, presetToRun);
+    }
+  }
+
+  const loginForm = document.getElementById('mock-login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      completeAuthAndEnterBoardroom();
+    });
+  }
+
+  const loginBypassBtn = document.getElementById('btn-login-bypass');
+  if (loginBypassBtn) {
+    loginBypassBtn.addEventListener('click', () => {
+      completeAuthAndEnterBoardroom();
+    });
+  }
+
+  // Header Nav Links
+  document.querySelectorAll('[data-view-target="login"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!state.pendingPrompt && loginBanner) {
+        loginBanner.classList.remove('visible');
+      }
+    });
+  });
+
+  // 4. Boardroom Input Submission
+  const boardroomForm = document.getElementById('boardroom-form');
+  const boardroomInput = document.getElementById('boardroom-input');
+  if (boardroomForm && boardroomInput) {
+    boardroomForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = boardroomInput.value.trim();
+      if (!text) return;
+      boardroomInput.value = '';
+      runSimulation(text, 'fitness');
+    });
+  }
+
+  // Secondary Boardroom Actions
+  const resetBtn = document.getElementById('btn-reset-boardroom');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      resetBoardroom();
+    });
+  }
+
+  const exportBtn = document.getElementById('btn-export-charter');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      alert('FounderAI Startup Charter exported to markdown file: /PulseAI_Master_Charter.md');
+    });
+  }
+
+  // Sidebar Agent click to filter
+  document.querySelectorAll('.sidebar-agent-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const agentId = item.getAttribute('data-agent');
+      if (state.activeFilter === agentId) {
+        filterFeed(null); // toggle off
+      } else {
+        filterFeed(agentId);
+      }
+    });
+  });
+
+  // Clear sidebar filter
+  const clearFilterBtn = document.getElementById('sidebar-clear-filter');
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener('click', () => {
+      filterFeed(null);
+    });
+  }
+
+  // Charter block click -> scroll & pulse corresponding note in feed
+  document.querySelectorAll('.charter-section-block').forEach(block => {
+    block.addEventListener('click', () => {
+      const agentId = block.getAttribute('data-agent');
+      if (!agentId) return;
+      const note = document.querySelector(`.meeting-note[data-agent="${agentId}"]`);
+      if (note) {
+        note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        note.classList.add('highlight-pulse');
+        setTimeout(() => { note.classList.remove('highlight-pulse'); }, 1500);
+      }
+    });
+  });
+
+  // Sign out listeners
+  const headerSignOutBtn = document.getElementById('btn-header-signout');
+  if (headerSignOutBtn) {
+    headerSignOutBtn.addEventListener('click', () => {
+      signOut();
+    });
+  }
+
+  const profileSignOutBtn = document.getElementById('btn-profile-signout');
+  if (profileSignOutBtn) {
+    profileSignOutBtn.addEventListener('click', () => {
+      signOut();
+    });
+  }
+
+  // Default view
+  switchView('landing');
+});
+
+// Expose on Window for Developer/Backend API consumption
+window.FounderAI = {
+  state,
+  switchView,
+  addMessage,
+  setStatus,
+  setStage,
+  filterFeed,
+  runSimulation,
+  resetBoardroom,
+  updateCharterSnippet
+};
+
+// Backwards compatibility alias
+window.FoundrAI = window.FounderAI;
