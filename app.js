@@ -7,7 +7,7 @@
 // ── FounderAI Backend API ─────────────────────────────────────────────────────
 const API_BASE = 'http://localhost:4000'; // Change to your Railway URL when deployed
 
-// ── Auth State ────────────────────────────────────────────────────────────────
+// ── Auth State & Local Storage Fallback ───────────────────────────────────────
 const Auth = {
   token: localStorage.getItem('foundrai_token') || null,
   user:  JSON.parse(localStorage.getItem('foundrai_user') || 'null'),
@@ -30,33 +30,143 @@ const Auth = {
 
   headers() {
     return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` };
+  },
+
+  // Local user directory for offline / local-first usage
+  getLocalUsers() {
+    try {
+      return JSON.parse(localStorage.getItem('foundrai_local_users') || '[]');
+    } catch {
+      return [];
+    }
+  },
+
+  saveLocalUsers(users) {
+    localStorage.setItem('foundrai_local_users', JSON.stringify(users));
   }
 };
 
-// ── API Helpers ───────────────────────────────────────────────────────────────
+// ── API Helpers with Automatic Local Fallback ──────────────────────────────────
 async function apiPost(path, body) {
-  const res = await fetch(API_BASE + path, {
-    method: 'POST',
-    headers: Auth.isLoggedIn ? Auth.headers() : { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
-  return data;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(API_BASE + path, {
+      method: 'POST',
+      headers: Auth.isLoggedIn ? Auth.headers() : { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  } catch (err) {
+    // If it's a real API validation error from server (status 400/401/409), rethrow it
+    if (err.message && !err.message.includes('fetch') && !err.message.includes('abort') && !err.message.includes('Failed') && !err.message.includes('NetworkError')) {
+      throw err;
+    }
+    // Network / Server offline fallback
+    return handleLocalAuthFallback(path, body);
+  }
+}
+
+function handleLocalAuthFallback(path, body) {
+  const users = Auth.getLocalUsers();
+
+  if (path === '/auth/signup') {
+    const email = (body.email || '').trim().toLowerCase();
+    const existing = users.find(u => (u.email || '').toLowerCase() === email);
+    if (existing) {
+      throw new Error('An account with this email already exists');
+    }
+    const newUser = {
+      id: 'usr_local_' + Math.random().toString(36).substr(2, 9),
+      email,
+      display_name: body.display_name || email.split('@')[0] || 'Founder',
+      startup_idea: null,
+      industry: null,
+      stage: 'idea',
+      password: body.password,
+      created_at: new Date().toISOString()
+    };
+    users.push(newUser);
+    Auth.saveLocalUsers(users);
+    const token = 'token_local_' + Math.random().toString(36).substr(2, 16);
+    const { password: _, ...safeUser } = newUser;
+    return { token, user: safeUser, isLocal: true };
+  }
+
+  if (path === '/auth/login') {
+    const email = (body.email || '').trim().toLowerCase();
+    // Default founder demo bypass credentials
+    if (email === 'founder@foundrai.com' || email === 'demo@foundrai.com') {
+      const demoUser = {
+        id: 'usr_demo_executive',
+        email: email,
+        display_name: 'Principal Founder',
+        startup_idea: 'PulseAI',
+        industry: 'Biometric AI',
+        stage: 'idea',
+        created_at: new Date().toISOString()
+      };
+      return { token: 'token_local_demo', user: demoUser, isLocal: true };
+    }
+
+    const user = users.find(u => (u.email || '').toLowerCase() === email);
+    if (!user) {
+      throw new Error('Account not found. Please create an account.');
+    }
+    if (user.password && user.password !== body.password) {
+      throw new Error('Invalid password. Please try again.');
+    }
+    const token = 'token_local_' + Math.random().toString(36).substr(2, 16);
+    const { password: _, ...safeUser } = user;
+    return { token, user: safeUser, isLocal: true };
+  }
+
+  throw new Error('Backend service unavailable. Using local offline storage.');
 }
 
 async function apiGet(path) {
-  const res = await fetch(API_BASE + path, { headers: Auth.headers() });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
-  return data;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(API_BASE + path, { headers: Auth.headers(), signal: controller.signal });
+    clearTimeout(timeoutId);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  } catch (err) {
+    // Fallback to local sessions
+    if (path === '/chats') {
+      return JSON.parse(localStorage.getItem('foundrai_local_chats') || '[]');
+    }
+    if (path.startsWith('/chats/') && path.endsWith('/messages')) {
+      const parts = path.split('/');
+      const chatId = parts[2];
+      const allMsgs = JSON.parse(localStorage.getItem('foundrai_local_msgs') || '{}');
+      return allMsgs[chatId] || [];
+    }
+    throw err;
+  }
 }
 
 async function apiDelete(path) {
-  const res = await fetch(API_BASE + path, { method: 'DELETE', headers: Auth.headers() });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
-  return data;
+  try {
+    const res = await fetch(API_BASE + path, { method: 'DELETE', headers: Auth.headers() });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  } catch (err) {
+    if (path.startsWith('/chats/')) {
+      const id = path.split('/')[2];
+      const chats = JSON.parse(localStorage.getItem('foundrai_local_chats') || '[]').filter(c => c.id !== id);
+      localStorage.setItem('foundrai_local_chats', JSON.stringify(chats));
+      return { success: true };
+    }
+    throw err;
+  }
 }
 
 // ── Auth UI Helpers ───────────────────────────────────────────────────────────
@@ -86,36 +196,72 @@ const ChatAPI = {
 
   async loadAll() {
     if (!Auth.isLoggedIn) return [];
-    try { return await apiGet('/chats'); } catch { return []; }
+    try {
+      return await apiGet('/chats');
+    } catch {
+      return JSON.parse(localStorage.getItem('foundrai_local_chats') || '[]');
+    }
   },
 
   async create(title) {
     if (!Auth.isLoggedIn) return null;
+    const fallbackChat = {
+      id: 'chat_' + Math.random().toString(36).substr(2, 9),
+      title: title || 'New Session',
+      created_at: new Date().toISOString()
+    };
     try {
       const chat = await apiPost('/chats', { title });
-      this.currentChatId = chat.id;
+      this.currentChatId = chat.id || fallbackChat.id;
       return chat;
-    } catch (e) {
-      console.warn('Failed to create chat:', e.message);
-      return null;
+    } catch {
+      const chats = JSON.parse(localStorage.getItem('foundrai_local_chats') || '[]');
+      chats.unshift(fallbackChat);
+      localStorage.setItem('foundrai_local_chats', JSON.stringify(chats));
+      this.currentChatId = fallbackChat.id;
+      return fallbackChat;
     }
   },
 
   async delete(id) {
-    await apiDelete(`/chats/${id}`);
+    try {
+      await apiDelete(`/chats/${id}`);
+    } catch (e) {
+      console.warn('Delete chat local fallback:', e);
+    }
+    const chats = JSON.parse(localStorage.getItem('foundrai_local_chats') || '[]').filter(c => c.id !== id);
+    localStorage.setItem('foundrai_local_chats', JSON.stringify(chats));
     if (this.currentChatId === id) this.currentChatId = null;
   },
 
   async getMessages(id) {
-    return await apiGet(`/chats/${id}/messages`);
+    try {
+      return await apiGet(`/chats/${id}/messages`);
+    } catch {
+      const allMsgs = JSON.parse(localStorage.getItem('foundrai_local_msgs') || '{}');
+      return allMsgs[id] || [];
+    }
   },
 
   async saveMessage(role, content, agent = null) {
     if (!this.currentChatId || !Auth.isLoggedIn) return;
+    const msgObj = {
+      id: 'msg_' + Math.random().toString(36).substr(2, 9),
+      role,
+      agent: agent || null,
+      content,
+      created_at: new Date().toISOString()
+    };
+    // Save locally
+    const allMsgs = JSON.parse(localStorage.getItem('foundrai_local_msgs') || '{}');
+    if (!allMsgs[this.currentChatId]) allMsgs[this.currentChatId] = [];
+    allMsgs[this.currentChatId].push(msgObj);
+    localStorage.setItem('foundrai_local_msgs', JSON.stringify(allMsgs));
+
     try {
       await apiPost(`/chats/${this.currentChatId}/messages`, { role, content, agent });
     } catch (e) {
-      console.warn('Failed to save message:', e.message);
+      // Offline fallback already stored message locally
     }
   },
 
@@ -282,6 +428,29 @@ function bootstrapAuth() {
       showAuthMessage(err.message, 'error');
     } finally {
       setSubmitLoading('btn-signup-submit', false, 'Create Account →');
+    }
+  });
+
+  // Instant Demo Bypass
+  document.getElementById('btn-login-bypass')?.addEventListener('click', () => {
+    const demoUser = {
+      id: 'usr_demo_executive',
+      email: 'founder@foundrai.com',
+      display_name: 'Principal Founder',
+      startup_idea: 'PulseAI',
+      industry: 'Biometric AI',
+      stage: 'idea',
+      created_at: new Date().toISOString()
+    };
+    Auth.save('token_demo_bypass', demoUser);
+    state.isAuthenticated = true;
+    updateProfilePage(demoUser);
+    switchView('boardroom');
+    if (state.pendingPrompt) {
+      const p = state.pendingPrompt;
+      const preset = state.pendingPreset || 'fitness';
+      state.pendingPrompt = '';
+      runSimulation(p, preset);
     }
   });
 

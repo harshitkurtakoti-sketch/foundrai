@@ -7,9 +7,10 @@ config.js
 .env
 .env.local
 
-# Logs
+# Logs and Local Data
 *.log
 npm-debug.log*
+server/data/
 
 # System
 .DS_Store
