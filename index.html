@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>FounderAI — Coordinated AI Executive Founding Team</title>
   <meta name="description" content="Replace the executive team a founder hires with a coordinated multi-agent AI squad: CEO, Research, Engineering, Marketing, Finance, Legal, and Design.">
   <link rel="stylesheet" href="styles.css">
@@ -20,15 +20,15 @@
       <!-- Dynamic Header Actions based on Auth State -->
       <div id="header-actions-guest" class="header-actions">
         <button class="btn btn-secondary btn-sm" data-view-target="login">Sign In</button>
-        <button class="btn btn-primary btn-sm" data-view-target="login">Enter Boardroom</button>
+        <button class="btn btn-primary btn-sm" data-view-target="login">Boardroom</button>
       </div>
 
       <div id="header-actions-auth" class="header-actions" style="display: none;">
-        <button class="btn btn-secondary btn-sm" data-view-target="profile">
-          <span>👤</span> <span>Founder (Executive)</span>
+        <button class="btn btn-secondary btn-sm" data-view-target="profile" title="Founder Executive Profile">
+          <span>👤</span> <span class="header-user-label">Founder</span>
         </button>
         <button id="btn-header-boardroom" class="btn btn-primary btn-sm" data-view-target="boardroom">Boardroom</button>
-        <button id="btn-header-signout" class="btn btn-secondary btn-sm" style="color: var(--ink-muted);">Sign Out</button>
+        <button id="btn-header-signout" class="btn btn-secondary btn-sm" style="color: var(--ink-muted);" title="Sign Out">Sign Out</button>
       </div>
     </div>
   </header>
@@ -468,10 +468,27 @@
        ========================================================================= -->
   <main id="view-boardroom" class="view-container">
     <div class="boardroom-view">
+      
+      <!-- Mobile Segmented Navigation for Boardroom Panels -->
+      <nav class="boardroom-mobile-nav" id="boardroom-mobile-tabs" aria-label="Boardroom Panels">
+        <button type="button" class="boardroom-mobile-tab active" data-boardroom-tab="feed">
+          <span class="tab-icon">💬</span>
+          <span class="tab-label">Deliberation</span>
+        </button>
+        <button type="button" class="boardroom-mobile-tab" data-boardroom-tab="roster">
+          <span class="tab-icon">👥</span>
+          <span class="tab-label">Roster (7)</span>
+        </button>
+        <button type="button" class="boardroom-mobile-tab" data-boardroom-tab="charter">
+          <span class="tab-icon">📜</span>
+          <span class="tab-label">Live Charter</span>
+        </button>
+      </nav>
+
       <div class="boardroom-layout">
         
         <!-- Left Column: Agent Directory & Status Tracker -->
-        <aside class="boardroom-sidebar">
+        <aside class="boardroom-sidebar" id="boardroom-sidebar-panel">
           <div class="sidebar-header">
             <h3>Active Board Roster</h3>
             <span class="status-badge" style="font-size: 0.75rem;"><span class="status-dot active"></span> Live</span>
@@ -548,29 +565,28 @@
         </aside>
 
         <!-- Center Column: Chronological Meeting Feed -->
-        <section class="boardroom-main">
+        <section class="boardroom-main mobile-panel-active" id="boardroom-feed-panel">
           
           <!-- Topbar with Chairman Status -->
           <div class="boardroom-topbar">
             <div class="topbar-topic">
-              <span class="topic-label">Deliberation:</span>
-              <span id="boardroom-topic-title" class="topic-title">PulseAI: Adaptive Biometric Fitness & Nutrition Co-Pilot</span>
+              <span class="topic-label">Topic:</span>
+              <span id="boardroom-topic-title" class="topic-title">PulseAI: Adaptive Biometric Co-Pilot</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="org-chart-badge" style="font-size: 0.72rem; color: var(--accent-steel);">Founder in Command</span>
-              <button id="btn-export-charter" class="btn btn-primary btn-sm">Export Master Charter</button>
+            <div class="topbar-actions">
+              <button id="btn-export-charter" class="btn btn-primary btn-sm">Export Charter</button>
             </div>
           </div>
 
           <!-- Deliberation Phase Progress Tracker -->
           <div class="deliberation-progress-bar">
-            <div class="stage-step active" id="stage-1"><span class="stage-bullet"></span> 1. Directive & Brief</div>
+            <div class="stage-step active" id="stage-1"><span class="stage-bullet"></span> 1. Brief</div>
             <div class="stage-arrow">→</div>
-            <div class="stage-step" id="stage-2"><span class="stage-bullet"></span> 2. Parallel Specialization</div>
+            <div class="stage-step" id="stage-2"><span class="stage-bullet"></span> 2. Execution</div>
             <div class="stage-arrow">→</div>
-            <div class="stage-step" id="stage-3"><span class="stage-bullet"></span> 3. Risk & Compliance</div>
+            <div class="stage-step" id="stage-3"><span class="stage-bullet"></span> 3. Review</div>
             <div class="stage-arrow">→</div>
-            <div class="stage-step" id="stage-4"><span class="stage-bullet"></span> 4. Charter Synthesis</div>
+            <div class="stage-step" id="stage-4"><span class="stage-bullet"></span> 4. Synthesis</div>
           </div>
 
           <div id="boardroom-feed" class="feed-container">
@@ -583,7 +599,7 @@
                 type="text" 
                 id="boardroom-input" 
                 class="boardroom-input" 
-                placeholder="Issue a new directive to the team (e.g. adjust pricing tier or change tech stack)..." 
+                placeholder="Issue a directive to the team..." 
                 autocomplete="off"
               />
               <button type="submit" class="btn btn-primary">Dispatch</button>
@@ -593,7 +609,7 @@
         </section>
 
         <!-- Right Column: Live Compiled Charter Synthesis Panel -->
-        <aside class="boardroom-charter-panel">
+        <aside class="boardroom-charter-panel" id="boardroom-charter-panel">
           <div class="panel-header">
             <h3>Live Startup Charter</h3>
             <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-steel);">v1.0-draft</span>
@@ -641,6 +657,7 @@
 
       </div>
     </div>
+  </main>
   <!-- =========================================================================
        VIEW 4: FOUNDER PROFILE VIEW
        ========================================================================= -->

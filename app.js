@@ -416,10 +416,35 @@ function switchView(viewName) {
     }
   });
 
+  // Update floating demo buttons if present
+  document.querySelectorAll('.demo-view-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-view') === viewName);
+  });
+
+  if (viewName === 'boardroom') {
+    switchBoardroomMobileTab('feed');
+  }
+
   updateHeaderAuthState();
 
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Mobile Boardroom Panel Switcher
+function switchBoardroomMobileTab(tabName) {
+  const feedPanel = document.getElementById('boardroom-feed-panel');
+  const sidebarPanel = document.getElementById('boardroom-sidebar-panel');
+  const charterPanel = document.getElementById('boardroom-charter-panel');
+  const tabs = document.querySelectorAll('.boardroom-mobile-tab');
+
+  tabs.forEach(tab => {
+    tab.classList.toggle('active', tab.getAttribute('data-boardroom-tab') === tabName);
+  });
+
+  if (feedPanel) feedPanel.classList.toggle('mobile-panel-active', tabName === 'feed');
+  if (sidebarPanel) sidebarPanel.classList.toggle('mobile-panel-active', tabName === 'roster');
+  if (charterPanel) charterPanel.classList.toggle('mobile-panel-active', tabName === 'charter');
 }
 
 // Sign Out Handler
@@ -435,6 +460,7 @@ window.loadPresetFromProfile = function(presetKey) {
   const preset = PRESETS[presetKey];
   if (preset) {
     switchView('boardroom');
+    switchBoardroomMobileTab('feed');
     runSimulation(preset.prompt, presetKey);
   }
 };
@@ -511,6 +537,14 @@ function filterFeed(agentId) {
       feed.querySelectorAll('.meeting-note').forEach(note => {
         note.style.display = 'block';
       });
+    }
+  }
+
+  // On mobile screens, automatically switch to deliberation feed tab to see results
+  if (window.innerWidth < 992) {
+    switchBoardroomMobileTab('feed');
+    if (feed) {
+      feed.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 }
@@ -1096,6 +1130,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Mobile Boardroom Navigation Tabs
+  document.querySelectorAll('.boardroom-mobile-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabName = tab.getAttribute('data-boardroom-tab');
+      switchBoardroomMobileTab(tabName);
+    });
+  });
+
   // Secondary Boardroom Actions
   const resetBtn = document.getElementById('btn-reset-boardroom');
   if (resetBtn) {
@@ -1136,12 +1178,19 @@ document.addEventListener('DOMContentLoaded', () => {
     block.addEventListener('click', () => {
       const agentId = block.getAttribute('data-agent');
       if (!agentId) return;
-      const note = document.querySelector(`.meeting-note[data-agent="${agentId}"]`);
-      if (note) {
-        note.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        note.classList.add('highlight-pulse');
-        setTimeout(() => { note.classList.remove('highlight-pulse'); }, 1500);
+
+      if (window.innerWidth < 992) {
+        switchBoardroomMobileTab('feed');
       }
+
+      setTimeout(() => {
+        const note = document.querySelector(`.meeting-note[data-agent="${agentId}"]`);
+        if (note) {
+          note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          note.classList.add('highlight-pulse');
+          setTimeout(() => { note.classList.remove('highlight-pulse'); }, 1500);
+        }
+      }, 50);
     });
   });
 
