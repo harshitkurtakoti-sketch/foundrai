@@ -2488,21 +2488,42 @@ button, input, textarea, select {
     padding: 2px 5px;
   }
 
-  /* Mobile floating input bar */
+  /* Mobile floating input bar with clearance for floating badges (Netlify / hosting badges) */
   .boardroom-input-container {
-    padding: 6px 8px calc(8px + env(safe-area-inset-bottom, 12px)) 8px;
+    padding: 6px 10px calc(58px + env(safe-area-inset-bottom, 12px)) 10px;
+    background-color: #FFFFFF;
+    border-top: 1px solid var(--border-hairline);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 40;
+  }
+
+  .input-box-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
   }
 
   .boardroom-input {
+    flex: 1;
     font-size: 16px; /* Prevents auto-zoom on iOS */
-    padding: 8px 12px;
-    min-height: 36px;
+    padding: 10px 14px;
+    min-height: 40px;
+    border-radius: 22px;
+    background-color: var(--bg-paper);
+    border: 1.5px solid var(--border-strong);
   }
 
   #btn-boardroom-dispatch {
-    padding: 6px 12px;
-    min-height: 36px;
-    font-size: 0.78rem;
+    padding: 9px 16px;
+    min-height: 40px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    border-radius: 20px;
+    flex-shrink: 0;
+    cursor: pointer;
+    touch-action: manipulation;
   }
 
   /* Sidebar Roster list on mobile */
